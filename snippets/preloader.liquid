@@ -1,0 +1,66 @@
+{% comment %}
+  Snippet para la pantalla de carga (Preloader)
+  Muestra un logo que gira mientras la página carga.
+{% endcomment %}
+
+<style>
+  #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    z-index: 9999; /* Asegura que esté por encima de todo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.75s ease, visibility 0.75s ease;
+  }
+
+  #preloader.preloader-hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .preloader-logo {
+    width: 100px; /* Un poco más grande para que se note la animación */
+    height: auto;
+    /* --- CAMBIO: Animación de rotación aplicada al logo --- */
+    animation: spin 1.5s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<div id="preloader">
+  {% comment %}
+    Asegúrate de que tu logo 'ESCUDO-03.webp' o 'LOGOKINGS-03.webp'
+    esté subido en la carpeta 'Assets' de tu tema.
+  {% endcomment %}
+  <img
+    class="preloader-logo"
+    src="{{ 'LOGOKINGS-03.webp' | asset_url }}"
+    alt="Loading Logo"
+  >
+</div>
+
+<script>
+  // Espera a que toda la página, incluyendo imágenes y scripts, se haya cargado.
+  window.addEventListener('load', function() {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+      // Espera un momento extra para una transición suave.
+      setTimeout(function() {
+        preloader.classList.add('preloader-hidden');
+      }, 500); // 500 milisegundos de retraso
+    }
+  });
+</script>

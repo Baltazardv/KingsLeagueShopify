@@ -1,0 +1,25 @@
+<div class="feature-media-{{ section_id }}">
+  {%- case block.settings.media_type -%}
+    {%- when 'icon' -%}
+      {{ block.settings.icon }}
+    {%- when 'image' -%}
+      {%- if block.settings.image != blank -%}
+        <img
+          src="{{ block.settings.image | image_url: height: 160 }}"
+          alt="{{ block.settings.image.alt | escape }}"
+          height="80"
+          loading="lazy"
+        >
+      {%- else -%}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    {%- when 'video' -%}
+      {%- if block.settings.video_url.id != blank -%}
+        <div class="video-wrapper">
+          {{ block.settings.video_url | video_tag: autoplay: false, loop: false, controls: true, muted: false }}
+        </div>
+      {%- endif -%}
+  {%- endcase -%}
+</div>
+<h3 class="feature-card-title-{{ section_id }}">{{ block.settings.title | escape }}</h3>
+<p class="feature-card-text-{{ section_id }}">{{ block.settings.text | escape }}</p>
