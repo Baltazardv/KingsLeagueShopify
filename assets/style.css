@@ -1,0 +1,249 @@
+/*
+================================================================
+KLA WATCHES - HOJA DE ESTILOS PARA SHOPIFY
+================================================================
+NOTA IMPORTANTE: Las declaraciones de fuentes (@font-face) se han
+eliminado de este archivo. Debes añadirlas directamente en tu
+archivo 'layout/theme.liquid' usando el filtro 'asset_url' de Liquid
+para que Shopify las pueda cargar correctamente.
+================================================================
+*/
+
+/*
+================================================================
+--- ASIGNACIÓN DE FUENTES Y ESTILOS GENERALES ---
+================================================================
+*/
+body {
+    font-family: 'Archivo', sans-serif;
+    font-weight: bold;
+    background-color: #000000;
+    color: #fff;
+}
+
+h1 {
+    font-family: 'Termina Test', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 900;
+}
+
+h2,
+h3,
+summary,
+.font-primary {
+    font-family: 'Matrice', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 900;
+}
+
+/*
+================================================================
+--- ESTILOS DE COMPONENTES ---
+================================================================
+*/
+
+/* Preloader */
+#preloader {
+    transition: opacity 0.75s ease-in-out, visibility 0.75s ease-in-out;
+}
+
+#preloader.preloader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Video de Fondo (Usado en la sección Hero) */
+#background-video {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -100;
+    object-fit: cover;
+}
+
+/* Header */
+#header.header-shrink nav {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+#header.header-shrink .top-bar {
+    max-height: 0;
+    padding: 0;
+    opacity: 0;
+}
+
+#header .header-logo {
+    width: 10rem;
+    transition: width 0.3s ease-in-out;
+}
+
+#header.header-shrink .header-logo {
+    width: 8rem;
+}
+
+#header .nav-link {
+    position: relative;
+    padding-bottom: 4px;
+}
+
+#header .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f4af23;
+    transition: width 0.3s ease-in-out;
+}
+
+#header .nav-link:hover::after {
+    width: 100%;
+}
+
+/* Paleta de Colores y Efectos */
+.kings-gradient-text {
+    background: linear-gradient(90deg, #FFD700, #F59E0B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.kings-gradient-bg {
+    background: linear-gradient(90deg, #F59E0B, #D97706);
+}
+
+.pulse-btn {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Estilos de Tarjetas con Desenfoque */
+.feature-card,
+.review-card,
+.product-card,
+.info-panel {
+    background-color: rgba(26, 26, 26, 0.8);
+    border: 1px solid rgba(75, 75, 75, 0.5);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease-in-out;
+}
+
+.feature-card:hover,
+.review-card:hover,
+.product-card:hover {
+    transform: translateY(-5px);
+    border-color: #f4af23;
+}
+
+/* Carrusel de Escudos */
+.team-ticker {
+    overflow: hidden;
+    position: relative;
+}
+
+.team-ticker:hover .team-ticker-track {
+    animation-play-state: paused;
+}
+
+.team-ticker::before,
+.team-ticker::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100px;
+    height: 100%;
+    z-index: 2;
+}
+
+.team-ticker::before {
+    left: 0;
+    background: linear-gradient(to right, #000000 20%, rgba(0, 0, 0, 0) 100%);
+}
+
+.team-ticker::after {
+    right: 0;
+    background: linear-gradient(to left, #000000 20%, rgba(0, 0, 0, 0) 100%);
+}
+
+.team-ticker-track {
+    display: flex;
+    width: fit-content;
+}
+
+.team-logo-item {
+    width: 150px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.team-logo-item img {
+    height: 60px;
+    width: auto;
+    filter: grayscale(100%) opacity(0.6);
+    transition: all 0.3s ease;
+}
+
+.team-logo-item img.is-active {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.15);
+}
+
+/* Modal */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #F59E0B;
+    border-radius: 4px;
+}
+
+/* Scrollbar horizontal en móvil */
+@media (max-width: 767px) {
+    .horizontal-scroll {
+        scrollbar-width: auto;
+    }
+    .horizontal-scroll::-webkit-scrollbar {
+        display: block;
+        height: 8px;
+    }
+    .horizontal-scroll::-webkit-scrollbar-track {
+        background: #1f2937;
+        border-radius: 4px;
+    }
+    .horizontal-scroll::-webkit-scrollbar-thumb {
+        background-color: #f4af23;
+        border-radius: 4px;
+    }
+}
+
+.wishlist-btn-card .heart-icon.filled {
+    fill: #ef4444;
+    stroke: #ef4444;
+}
