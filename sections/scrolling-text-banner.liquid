@@ -1,0 +1,173 @@
+{% comment %}
+  Sección para un banner de texto deslizante (ticker/marquesina).
+  Permite personalizar el texto, el logo, los colores y la velocidad.
+{% endcomment %}
+
+<style>
+  .scrolling-banner-section-{{ section.id }} {
+    --animation-speed: {{ section.settings.speed }}s;
+    background-color: {{ section.settings.background_color }};
+    padding: 0.75rem 0;
+    border-top: 2px solid {{ section.settings.border_color }};
+    border-bottom: 2px solid {{ section.settings.border_color }};
+    overflow: hidden; /* Clave para el efecto */
+  }
+
+  .scrolling-banner-track-{{ section.id }} {
+    display: flex;
+    white-space: nowrap; /* Evita que el texto se parta en varias líneas */
+    animation: scroll-left var(--animation-speed) linear infinite;
+  }
+
+  .scrolling-banner-section-{{ section.id }}:hover .scrolling-banner-track-{{ section.id }} {
+    animation-play-state: paused; /* Pausa la animación al pasar el mouse por encima */
+  }
+
+  .scrolling-banner-item-{{ section.id }} {
+    display: flex;
+    align-items: center;
+    font-family: 'Termina Test', sans-serif; /* Usando una de tus fuentes personalizadas */
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.75rem;
+    color: {{ section.settings.text_color_accent }};
+    padding: 0 1.5rem; /* Espacio entre elementos */
+  }
+
+  .scrolling-banner-item-{{ section.id }} img {
+    height: 1.25rem; /* Altura del logo pequeño */
+    width: auto;
+    margin-right: 0.75rem;
+    filter: brightness(0) invert(1); /* Hace el logo blanco si es negro */
+  }
+
+  .scrolling-banner-item-{{ section.id }} .accent-text {
+    color: {{ section.settings.text_color_main }};
+    margin-left: 0.75rem;
+  }
+
+  @keyframes scroll-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%); /* Se detiene a la mitad para un bucle perfecto */
+    }
+  }
+
+  @media (max-width: 768px) {
+    .scrolling-banner-item-{{ section.id }} {
+      font-size: 1.25rem;
+      padding: 0 1rem;
+    }
+    .scrolling-banner-item-{{ section.id }} img {
+      height: 1rem;
+    }
+  }
+</style>
+
+<div class="scrolling-banner-section-{{ section.id }}">
+  <a
+    href="{{ section.settings.link | default: '#' }}"
+    aria-label="{{ section.settings.text_main | default: 'Banner' }}"
+  >
+    <div class="scrolling-banner-track-{{ section.id }}">
+      {%- for i in (1..20) -%}
+        <div class="scrolling-banner-item-{{ section.id }}">
+          {%- if section.settings.logo != blank -%}
+            <img
+              src="{{ section.settings.logo | image_url: width: 150 }}"
+              alt="{{ section.settings.logo.alt | default: 'Logo' }}"
+              width="{{ section.settings.logo.width }}"
+              height="{{ section.settings.logo.height }}"
+              loading="lazy"
+            >
+          {%- endif -%}
+          {{ section.settings.text_accent }}
+          <span class="accent-text">{{ section.settings.text_main }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  </a>
+</div>
+
+{% schema %}
+{
+  "name": "Banner Deslizante",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido del Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo pequeño (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "text_accent",
+      "label": "Texto de Acento (antes del principal)",
+      "default": "Openbank"
+    },
+    {
+      "type": "text",
+      "id": "text_main",
+      "label": "Texto Principal",
+      "default": "Kings League"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Enlace (toda la barra será un link)"
+    },
+    {
+      "type": "header",
+      "content": "Estilos y Animación"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color de los Bordes",
+      "default": "#f4af23"
+    },
+    {
+      "type": "color",
+      "id": "text_color_accent",
+      "label": "Color del Texto de Acento",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color_main",
+      "label": "Color del Texto Principal",
+      "default": "#f4af23"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "s",
+      "label": "Velocidad de Deslizamiento",
+      "info": "Un número más alto significa una animación más lenta.",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner Deslizante"
+    }
+  ]
+}
+{% endschema %}
+``` Cambié `"name": "Banner con Texto Deslizante"` por `"name": "Banner Deslizante"`.
+
+Con este cambio, el archivo debería guardarse sin ningún problema. ¡Pruéba

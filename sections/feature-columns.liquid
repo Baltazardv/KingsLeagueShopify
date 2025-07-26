@@ -1,0 +1,219 @@
+{% comment %}
+  Sección de columnas de características.
+  - Muestra 3 columnas en escritorio.
+  - Se convierte en un carrusel con scroll horizontal en móvil.
+  - Cada columna puede tener un icono, imagen o video.
+{% endcomment %}
+
+<style>
+  .features-section-{{ section.id }} {
+    padding: {{ section.settings.padding_vertical }}px 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .features-title-{{ section.id }} {
+    color: {{ section.settings.title_color }};
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+  }
+
+  .features-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .feature-card-{{ section.id }} {
+    background-color: rgba(26, 26, 26, 0.8);
+    border: 1px solid rgba(75, 75, 75, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    color: #fff;
+  }
+
+  .feature-media-{{ section.id }} {
+    margin: 0 auto 1.5rem auto;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feature-media-{{ section.id }} svg {
+    width: 50px;
+    height: 50px;
+    color: {{ section.settings.title_color }};
+  }
+
+  .feature-media-{{ section.id }} img {
+    max-height: 80px;
+    width: auto;
+    border-radius: 0.5rem;
+  }
+
+  .feature-media-{{ section.id }} .video-wrapper {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .feature-card-title-{{ section.id }} {
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card-text-{{ section.id }} {
+    color: #a0a0a0;
+    font-family: 'Archivo', sans-serif;
+    font-size: 1rem;
+  }
+
+  /* --- INICIO DE LA MODIFICACIÓN PARA MÓVILES --- */
+  @media (max-width: 767px) {
+    .features-grid-{{ section.id }} {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 0 1rem 1.5rem 1rem;
+      grid-template-columns: none;
+      gap: 1rem;
+    }
+
+    .features-grid-{{ section.id }}::-webkit-scrollbar {
+      height: 8px;
+    }
+    .features-grid-{{ section.id }}::-webkit-scrollbar-track {
+      background: #1f1f1f;
+      border-radius: 4px;
+    }
+    .features-grid-{{ section.id }}::-webkit-scrollbar-thumb {
+      background-color: #f4af23;
+      border-radius: 4px;
+    }
+
+    .feature-card-{{ section.id }} {
+      flex: 0 0 85%;
+      max-width: 320px;
+      scroll-snap-align: start;
+    }
+  }
+  /* --- FIN DE LA MODIFICACIÓN PARA MÓVILES --- */
+</style>
+
+<div class="features-section-{{ section.id }}">
+  <h2 class="features-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+
+  <div class="features-grid-{{ section.id }}">
+    {%- for block in section.blocks -%}
+      <div class="feature-card-{{ section.id }}">
+        {%- render 'feature-card-content', block: block, section_id: section.id -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Columnas con Media",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Diseñados para la Grandeza"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del Título y los Iconos",
+      "default": "#f4af23"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 20, "max": 120, "step": 4, "unit": "px",
+      "label": "Espaciado vertical",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Columna",
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Tipo de contenido",
+          "options": [
+            { "value": "icon", "label": "Icono" },
+            { "value": "image", "label": "Imagen" },
+            { "value": "video", "label": "Video" }
+          ],
+          "default": "icon"
+        },
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icono (SVG)",
+          "info": "Pega tu código SVG aquí. Ejemplo: <svg>...</svg>",
+          "default": "<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' d='M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008H12v-.008z' /></svg>"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "Enlace del video",
+          "accept": ["youtube", "vimeo"]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título de la columna",
+          "default": "Característica"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto de la columna",
+          "default": "Describe aquí la característica principal de tu producto o servicio."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Columnas con Media",
+      "blocks": [
+        { "type": "feature", "settings": { "title": "Diseño Exclusivo" }},
+        { "type": "feature", "settings": { "title": "Materiales de Calidad" }},
+        { "type": "feature", "settings": { "title": "Garantía Oficial" }}
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,140 @@
+{% comment %}
+  Sección para una barra de beneficios deslizante.
+  - Utiliza bloques para que cada beneficio sea editable.
+  - El carrusel se duplica para un efecto de bucle perfecto.
+{% endcomment %}
+
+<style>
+  .features-bar-section-{{ section.id }} {
+    --animation-speed: {{ section.settings.speed }}s;
+    background-color: {{ section.settings.background_color }};
+    /* --- CAMBIO: Más espaciado vertical --- */
+    padding: 1rem 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .features-bar-track-wrapper-{{ section.id }} {
+    display: flex;
+    width: fit-content;
+    animation: scroll-left-features-{{ section.id }} var(--animation-speed) linear infinite;
+  }
+
+  .features-bar-section-{{ section.id }}:hover .features-bar-track-wrapper-{{ section.id }} {
+    animation-play-state: paused;
+  }
+
+  .features-bar-track-{{ section.id }} {
+    display: flex;
+    align-items: center;
+  }
+
+  .feature-item-{{ section.id }} {
+    padding: 0 1.5rem;
+    white-space: nowrap;
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    /* --- CAMBIO: Letras más grandes y espaciadas --- */
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: {{ section.settings.text_color }};
+  }
+
+  /* El separador entre los items */
+  .feature-item-{{ section.id }}:not(:last-child)::after {
+    content: '|';
+    margin-left: 3rem;
+    opacity: 0.5;
+  }
+
+  @keyframes scroll-left-features-{{ section.id }} {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .feature-item-{{ section.id }} {
+      font-size: 1rem; /* Ajuste para móviles */
+    }
+  }
+</style>
+
+<div class="features-bar-section-{{ section.id }}">
+  <div class="features-bar-track-wrapper-{{ section.id }}">
+    {%- comment %} Se renderiza el carrusel dos veces para el bucle infinito {%- endcomment %}
+    <div class="features-bar-track-{{ section.id }}">
+      {%- for block in section.blocks -%}
+        <div class="feature-item-{{ section.id }}">
+          {{ block.settings.text | escape }}
+        </div>
+      {%- endfor -%}
+    </div>
+    <div class="features-bar-track-{{ section.id }}" aria-hidden="true">
+      {%- for block in section.blocks -%}
+        <div class="feature-item-{{ section.id }}">
+          {{ block.settings.text | escape }}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Barra de Beneficios",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo",
+      "default": "#2A3C4F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del Texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "s",
+      "label": "Velocidad de Deslizamiento",
+      "info": "Un número más alto significa una animación más lenta.",
+      "default": 30
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Beneficio",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto del Beneficio",
+          "default": "Beneficio"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Barra de Beneficios",
+      "blocks": [
+        { "type": "feature", "settings": { "text": "Hasta 3 MSI" } },
+        { "type": "feature", "settings": { "text": "Garantía 2 Años" } },
+        { "type": "feature", "settings": { "text": "Envíos Rápidos" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,885 @@
+{% comment %}
+  Sección de banner con imagen de fondo, texto y botón.
+  - La imagen se adapta para cubrir todo el espacio de la sección.
+  - El texto y el botón son completamente configurables desde el editor de temas.
+  - Incluye opciones avanzadas de personalización y responsive design.
+{% endcomment %}
+
+<style>
+  .image-hero-section-{{ section.id }} {
+    height: {{ section.settings.desktop_height }}vh;
+    min-height: {{ section.settings.min_height }}px;
+    position: relative;
+    display: flex;
+    justify-content: {{ section.settings.content_alignment_horizontal }};
+    align-items: {{ section.settings.content_alignment_vertical }};
+    color: white;
+    background-size: {{ section.settings.background_size }};
+    background-position: {{ section.settings.background_position }};
+    background-repeat: no-repeat;
+  }
+
+  .image-hero-overlay-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: {{ section.settings.overlay_style }};
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+  }
+
+  .image-hero-content-{{ section.id }} {
+    position: relative;
+    z-index: 2;
+    text-align: {{ section.settings.text_alignment }};
+    padding: {{ section.settings.content_padding_desktop }}rem;
+    max-width: {{ section.settings.content_max_width }}px;
+    width: 100%;
+  }
+
+  .image-hero-title-{{ section.id }} {
+    font-family: {{ section.settings.title_font.family }}, {{ section.settings.title_font.fallback_families }};
+    font-weight: {{ section.settings.title_font.weight }};
+    font-size: {{ section.settings.title_size_desktop }}rem;
+    text-transform: {{ section.settings.title_transform }};
+    color: {{ section.settings.title_color }};
+    margin-bottom: {{ section.settings.title_margin_bottom }}rem;
+    line-height: {{ section.settings.title_line_height }};
+    letter-spacing: {{ section.settings.title_letter_spacing }}em;
+    {% if section.settings.title_text_shadow %}
+    text-shadow: {{ section.settings.text_shadow_style }};
+    {% endif %}
+    {% if section.settings.title_stroke %}
+    -webkit-text-stroke: {{ section.settings.title_stroke_width }}px {{ section.settings.title_stroke_color }};
+    {% endif %}
+  }
+
+  .image-hero-subtitle-{{ section.id }} {
+    font-family: {{ section.settings.subtitle_font.family }}, {{ section.settings.subtitle_font.fallback_families }};
+    font-weight: {{ section.settings.subtitle_font.weight }};
+    font-size: {{ section.settings.subtitle_size_desktop }}rem;
+    text-transform: {{ section.settings.subtitle_transform }};
+    margin-bottom: {{ section.settings.subtitle_margin_bottom }}rem;
+    color: {{ section.settings.subtitle_color }};
+    line-height: {{ section.settings.subtitle_line_height }};
+    letter-spacing: {{ section.settings.subtitle_letter_spacing }}em;
+    {% if section.settings.subtitle_text_shadow %}
+    text-shadow: {{ section.settings.text_shadow_style }};
+    {% endif %}
+    {% if section.settings.subtitle_stroke %}
+    -webkit-text-stroke: {{ section.settings.subtitle_stroke_width }}px {{ section.settings.subtitle_stroke_color }};
+    {% endif %}
+  }
+
+  .image-hero-button-{{ section.id }} {
+    background-color: {{ section.settings.button_bg_color }};
+    color: {{ section.settings.button_text_color }};
+    font-family: {{ section.settings.button_font.family }}, {{ section.settings.button_font.fallback_families }};
+    font-weight: {{ section.settings.button_font.weight }};
+    font-size: {{ section.settings.button_font_size }}rem;
+    padding: {{ section.settings.button_padding_vertical }}rem {{ section.settings.button_padding_horizontal }}rem;
+    border-radius: {{ section.settings.button_border_radius }}px;
+    text-transform: {{ section.settings.button_text_transform }};
+    text-decoration: none;
+    transition: all {{ section.settings.button_transition_duration }}s ease;
+    border: {{ section.settings.button_border_width }}px solid {{ section.settings.button_border_color }};
+    letter-spacing: {{ section.settings.button_letter_spacing }}em;
+    display: inline-block;
+    {% if section.settings.button_shadow %}
+    box-shadow: {{ section.settings.button_shadow_style }};
+    {% endif %}
+  }
+
+  .image-hero-button-{{ section.id }}:hover {
+    background-color: {{ section.settings.button_bg_color_hover }};
+    color: {{ section.settings.button_text_color_hover }};
+    transform: {{ section.settings.button_hover_transform }};
+    {% if section.settings.button_shadow %}
+    box-shadow: {{ section.settings.button_hover_shadow_style }};
+    {% endif %}
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .image-hero-section-{{ section.id }} {
+      height: {{ section.settings.mobile_height }}vh;
+      min-height: {{ section.settings.mobile_min_height }}px;
+      background-image: url('{% if section.settings.mobile_image != blank %}{{ section.settings.mobile_image | image_url: width: 768 }}{% elsif section.settings.image != blank %}{{ section.settings.image | image_url: width: 768 }}{% else %}https://placehold.co/768x600/222/FFF?text=Sube+una+imagen{% endif %}');
+      background-size: {{ section.settings.mobile_background_size }};
+      background-position: {{ section.settings.mobile_background_position }};
+      justify-content: {{ section.settings.mobile_content_alignment_horizontal }};
+      align-items: {{ section.settings.mobile_content_alignment_vertical }};
+    }
+
+    .image-hero-content-{{ section.id }} {
+      padding: {{ section.settings.content_padding_mobile }}rem;
+      text-align: {{ section.settings.mobile_text_alignment }};
+    }
+
+    .image-hero-title-{{ section.id }} {
+      font-size: {{ section.settings.title_size_mobile }}rem;
+    }
+
+    .image-hero-subtitle-{{ section.id }} {
+      font-size: {{ section.settings.subtitle_size_mobile }}rem;
+    }
+
+    .image-hero-button-{{ section.id }} {
+      font-size: {{ section.settings.button_font_size_mobile }}rem;
+      padding: {{ section.settings.button_padding_mobile_vertical }}rem {{ section.settings.button_padding_mobile_horizontal }}rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .image-hero-title-{{ section.id }} {
+      font-size: {{ section.settings.title_size_small_mobile }}rem;
+    }
+
+    .image-hero-subtitle-{{ section.id }} {
+      font-size: {{ section.settings.subtitle_size_small_mobile }}rem;
+    }
+  }
+</style>
+
+<div
+  class="image-hero-section-{{ section.id }}"
+  style="background-image: url('{% if section.settings.image != blank %}{{ section.settings.image | image_url: width: 1920 }}{% else %}https://placehold.co/1920x800/222/FFF?text=Sube+una+imagen{% endif %}');"
+>
+  <div class="image-hero-overlay-{{ section.id }}"></div>
+  <div class="image-hero-content-{{ section.id }}">
+    {%- if section.settings.title != blank -%}
+      <h2 class="image-hero-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subtitle != blank -%}
+      <p class="image-hero-subtitle-{{ section.id }}">{{ section.settings.subtitle | escape }}</p>
+    {%- endif -%}
+    {%- if section.settings.button_text != blank and section.settings.button_link != blank -%}
+      <a href="{{ section.settings.button_link }}" class="image-hero-button-{{ section.id }}">
+        {{ section.settings.button_text | escape }}
+      </a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Banner Imagen Avanzado",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Imagen de Fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen de fondo (Desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Imagen de fondo (Móvil)",
+      "info": "Opcional. Si se deja en blanco, se usará la imagen de desktop."
+    },
+    {
+      "type": "select",
+      "id": "background_size",
+      "label": "Tamaño de imagen (Desktop)",
+      "options": [
+        {"value": "cover", "label": "Cubrir completamente"},
+        {"value": "contain", "label": "Ajustar dentro"},
+        {"value": "100% 100%", "label": "Estirar"},
+        {"value": "auto", "label": "Tamaño original"}
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "select",
+      "id": "background_position",
+      "label": "Posición de imagen (Desktop)",
+      "options": [
+        {"value": "center center", "label": "Centro"},
+        {"value": "center top", "label": "Centro arriba"},
+        {"value": "center bottom", "label": "Centro abajo"},
+        {"value": "left center", "label": "Izquierda centro"},
+        {"value": "right center", "label": "Derecha centro"},
+        {"value": "left top", "label": "Izquierda arriba"},
+        {"value": "right top", "label": "Derecha arriba"},
+        {"value": "left bottom", "label": "Izquierda abajo"},
+        {"value": "right bottom", "label": "Derecha abajo"}
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_background_size",
+      "label": "Tamaño de imagen (Móvil)",
+      "options": [
+        {"value": "cover", "label": "Cubrir completamente"},
+        {"value": "contain", "label": "Ajustar dentro"},
+        {"value": "100% 100%", "label": "Estirar"},
+        {"value": "auto", "label": "Tamaño original"}
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "select",
+      "id": "mobile_background_position",
+      "label": "Posición de imagen (Móvil)",
+      "options": [
+        {"value": "center center", "label": "Centro"},
+        {"value": "center top", "label": "Centro arriba"},
+        {"value": "center bottom", "label": "Centro abajo"},
+        {"value": "left center", "label": "Izquierda centro"},
+        {"value": "right center", "label": "Derecha centro"}
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "header",
+      "content": "Dimensiones del Banner"
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "Altura Desktop (vh)",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "Altura Móvil (vh)",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Altura mínima Desktop (px)",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "mobile_min_height",
+      "label": "Altura mínima Móvil (px)",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "default": 300
+    },
+    {
+      "type": "header",
+      "content": "Overlay/Filtro"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "Estilo de overlay",
+      "options": [
+        {"value": "linear-gradient(to top, #0009, transparent)", "label": "Degradado hacia arriba"},
+        {"value": "linear-gradient(to bottom, #0009, transparent)", "label": "Degradado hacia abajo"},
+        {"value": "linear-gradient(#0006, #0006)", "label": "Oscuro uniforme"},
+        {"value": "linear-gradient(transparent, transparent)", "label": "Sin overlay"},
+        {"value": "radial-gradient(circle, transparent, #0009)", "label": "Radial oscuro"},
+        {"value": "linear-gradient(45deg, #0005, #000b)", "label": "Diagonal"}
+      ],
+      "default": "linear-gradient(to top, #0009, transparent)"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad del overlay",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Alineación del Contenido"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment_horizontal",
+      "label": "Alineación horizontal (Desktop)",
+      "options": [
+        {"value": "flex-start", "label": "Izquierda"},
+        {"value": "center", "label": "Centro"},
+        {"value": "flex-end", "label": "Derecha"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment_vertical",
+      "label": "Alineación vertical (Desktop)",
+      "options": [
+        {"value": "flex-start", "label": "Arriba"},
+        {"value": "center", "label": "Centro"},
+        {"value": "flex-end", "label": "Abajo"}
+      ],
+      "default": "flex-end"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment_horizontal",
+      "label": "Alineación horizontal (Móvil)",
+      "options": [
+        {"value": "flex-start", "label": "Izquierda"},
+        {"value": "center", "label": "Centro"},
+        {"value": "flex-end", "label": "Derecha"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment_vertical",
+      "label": "Alineación vertical (Móvil)",
+      "options": [
+        {"value": "flex-start", "label": "Arriba"},
+        {"value": "center", "label": "Centro"},
+        {"value": "flex-end", "label": "Abajo"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación de texto (Desktop)",
+      "options": [
+        {"value": "left", "label": "Izquierda"},
+        {"value": "center", "label": "Centro"},
+        {"value": "right", "label": "Derecha"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_text_alignment",
+      "label": "Alineación de texto (Móvil)",
+      "options": [
+        {"value": "left", "label": "Izquierda"},
+        {"value": "center", "label": "Centro"},
+        {"value": "right", "label": "Derecha"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 300,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "content_padding_desktop",
+      "label": "Padding del contenido (Desktop)",
+      "min": 1,
+      "max": 8,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "content_padding_mobile",
+      "label": "Padding del contenido (Móvil)",
+      "min": 1,
+      "max": 6,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 1.5
+    },
+    {
+      "type": "header",
+      "content": "Título Principal"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título Principal",
+      "default": "JERSEYS OFICIALES 2025"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Fuente del título",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Tamaño título (Desktop)",
+      "min": 2,
+      "max": 8,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño título (Móvil)",
+      "min": 1.5,
+      "max": 6,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 2.5
+    },
+    {
+      "type": "range",
+      "id": "title_size_small_mobile",
+      "label": "Tamaño título (Móvil Pequeño)",
+      "min": 1,
+      "max": 5,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "title_transform",
+      "label": "Transformación texto título",
+      "options": [
+        {"value": "none", "label": "Normal"},
+        {"value": "uppercase", "label": "MAYÚSCULAS"},
+        {"value": "lowercase", "label": "minúsculas"},
+        {"value": "capitalize", "label": "Primera Letra Mayúscula"}
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "label": "Margen inferior título",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "title_line_height",
+      "label": "Altura de línea título",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "title_letter_spacing",
+      "label": "Espaciado letras título",
+      "min": -0.1,
+      "max": 0.2,
+      "step": 0.1,
+      "unit": "em",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Subtítulo"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "¡ENVÍO GRATIS!"
+    },
+    {
+      "type": "font_picker",
+      "id": "subtitle_font",
+      "label": "Fuente del subtítulo",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "label": "Tamaño subtítulo (Desktop)",
+      "min": 1,
+      "max": 4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "label": "Tamaño subtítulo (Móvil)",
+      "min": 0.8,
+      "max": 3,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_small_mobile",
+      "label": "Tamaño subtítulo (Móvil Pequeño)",
+      "min": 0.8,
+      "max": 2.5,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "subtitle_transform",
+      "label": "Transformación texto subtítulo",
+      "options": [
+        {"value": "none", "label": "Normal"},
+        {"value": "uppercase", "label": "MAYÚSCULAS"},
+        {"value": "lowercase", "label": "minúsculas"},
+        {"value": "capitalize", "label": "Primera Letra Mayúscula"}
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_margin_bottom",
+      "label": "Margen inferior subtítulo",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "subtitle_line_height",
+      "label": "Altura de línea subtítulo",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.4
+    },
+    {
+      "type": "range",
+      "id": "subtitle_letter_spacing",
+      "label": "Espaciado letras subtítulo",
+      "min": -0.1,
+      "max": 0.2,
+      "step": 0.1,
+      "unit": "em",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Efectos de Texto (Título y Subtítulo)"
+    },
+    {
+      "type": "checkbox",
+      "id": "title_text_shadow",
+      "label": "Sombra en título",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "subtitle_text_shadow",
+      "label": "Sombra en subtítulo",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text_shadow_style",
+      "label": "Estilo de la sombra de texto",
+      "default": "1px 1px 3px rgba(0,0,0,0.5)",
+      "info": "Ej: 2px 2px 4px rgba(0,0,0,0.5)"
+    },
+    {
+      "type": "checkbox",
+      "id": "title_stroke",
+      "label": "Borde en título",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "title_stroke_width",
+      "label": "Grosor borde título",
+      "min": 0.5,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "title_stroke_color",
+      "label": "Color borde título",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "subtitle_stroke",
+      "label": "Borde en subtítulo",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "subtitle_stroke_width",
+      "label": "Grosor borde subtítulo",
+      "min": 0.5,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "subtitle_stroke_color",
+      "label": "Color borde subtítulo",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "COMPRAR AHORA"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "font_picker",
+      "id": "button_font",
+      "label": "Fuente del botón",
+      "default": "helvetica_n7"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Tamaño fuente botón (Desktop)",
+      "min": 0.8,
+      "max": 2.5,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "button_font_size_mobile",
+      "label": "Tamaño fuente botón (Móvil)",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.9
+    },
+    {
+      "type": "select",
+      "id": "button_text_transform",
+      "label": "Transformación texto botón",
+      "options": [
+        {"value": "none", "label": "Normal"},
+        {"value": "uppercase", "label": "MAYÚSCULAS"},
+        {"value": "lowercase", "label": "minúsculas"},
+        {"value": "capitalize", "label": "Primera Letra Mayúscula"}
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "button_letter_spacing",
+      "label": "Espaciado letras botón",
+      "min": -0.1,
+      "max": 0.3,
+      "step": 0.1,
+      "unit": "em",
+      "default": 0.1
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Color de Fondo del Botón",
+      "default": "#f4af23"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color del Texto del Botón",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color_hover",
+      "label": "Fondo del Botón (hover)",
+      "default": "#e09e1a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color_hover",
+      "label": "Color texto botón (hover)",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Padding vertical botón (Desktop)",
+      "min": 0.5,
+      "max": 2,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.8
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Padding horizontal botón (Desktop)",
+      "min": 1,
+      "max": 4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 2.5
+    },
+    {
+      "type": "range",
+      "id": "button_padding_mobile_vertical",
+      "label": "Padding vertical botón (Móvil)",
+      "min": 0.5,
+      "max": 1.5,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.6
+    },
+    {
+      "type": "range",
+      "id": "button_padding_mobile_horizontal",
+      "label": "Padding horizontal botón (Móvil)",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Radio de borde botón",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Grosor borde botón",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Color borde botón",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_transition_duration",
+      "label": "Duración transición botón",
+      "min": 0.1,
+      "max": 1,
+      "step": 0.1,
+      "unit": "s",
+      "default": 0.3
+    },
+    {
+      "type": "header",
+      "content": "Efectos del Botón"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_shadow",
+      "label": "Sombra en botón",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "button_shadow_style",
+      "label": "Estilo sombra botón",
+      "options": [
+        {"value": "0 2px 4px rgba(0,0,0,0.2)", "label": "Sombra sutil"},
+        {"value": "0 4px 8px rgba(0,0,0,0.3)", "label": "Sombra media"},
+        {"value": "0 6px 12px rgba(0,0,0,0.4)", "label": "Sombra pronunciada"},
+        {"value": "0 0 20px rgba(244,175,35,0.5)", "label": "Resplandor dorado"}
+      ],
+      "default": "0 2px 4px rgba(0,0,0,0.2)"
+    },
+    {
+      "type": "select",
+      "id": "button_hover_shadow_style",
+      "label": "Estilo sombra botón (hover)",
+      "options": [
+        {"value": "0 4px 8px rgba(0,0,0,0.3)", "label": "Sombra sutil"},
+        {"value": "0 6px 12px rgba(0,0,0,0.4)", "label": "Sombra media"},
+        {"value": "0 8px 16px rgba(0,0,0,0.5)", "label": "Sombra pronunciada"},
+        {"value": "0 0 30px rgba(244,175,35,0.7)", "label": "Resplandor dorado intenso"}
+      ],
+      "default": "0 4px 8px rgba(0,0,0,0.3)"
+    },
+    {
+      "type": "select",
+      "id": "button_hover_transform",
+      "label": "Transformación botón (hover)",
+      "options": [
+        {"value": "none", "label": "Sin efecto"},
+        {"value": "translateY(-2px)", "label": "Elevar"},
+        {"value": "scale(1.05)", "label": "Agrandar"},
+        {"value": "translateY(-2px) scale(1.02)", "label": "Elevar y agrandar"},
+        {"value": "rotate(2deg)", "label": "Rotar ligeramente"}
+      ],
+      "default": "translateY(-2px)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner Avanzado",
+      "settings": {
+        "title": "JERSEYS OFICIALES 2025",
+        "subtitle": "¡ENVÍO GRATIS!",
+        "button_text": "COMPRAR AHORA"
+      }
+    }
+  ]
+}
+{% endschema %}

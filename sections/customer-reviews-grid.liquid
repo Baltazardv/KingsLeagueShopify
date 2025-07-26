@@ -1,0 +1,243 @@
+{% comment %}
+  Sección de Reseñas de Clientes con diseño de mosaico (masonry).
+  - Utiliza bloques para que cada reseña sea un elemento editable.
+  - El diseño se adapta automáticamente a diferentes tamaños de pantalla.
+{% endcomment %}
+
+<style>
+  .reviews-section-{{ section.id }} {
+    padding: {{ section.settings.padding_vertical }}px 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .reviews-container-{{ section.id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .reviews-title-{{ section.id }} {
+    color: {{ section.settings.title_color }};
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 3rem;
+  }
+
+  .reviews-grid-{{ section.id }} {
+    /* --- La magia del diseño de mosaico con CSS Columns --- */
+    column-count: 4;
+    column-gap: 1rem;
+  }
+
+  .review-card-{{ section.id }} {
+    display: inline-block; /* Necesario para que las columnas funcionen */
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: {{ section.settings.card_background_color }};
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    color: {{ section.settings.card_text_color }};
+    break-inside: avoid; /* Evita que una tarjeta se parta entre columnas */
+  }
+
+  .review-card-image-{{ section.id }} {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .review-stars-{{ section.id }} {
+    display: flex;
+    gap: 0.25rem;
+    color: #f4af23; /* Color de las estrellas */
+    margin-bottom: 0.75rem;
+  }
+
+  .review-stars-{{ section.id }} svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .review-author-{{ section.id }} {
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .review-author-{{ section.id }} .verified-badge {
+    color: #22c55e; /* Color verde para "Verificado" */
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+  }
+
+  .review-text-{{ section.id }} {
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+
+  /* --- Responsividad del grid --- */
+  @media (max-width: 990px) {
+    .reviews-grid-{{ section.id }} {
+      column-count: 3;
+    }
+  }
+  @media (max-width: 767px) {
+    .reviews-grid-{{ section.id }} {
+      column-count: 2;
+    }
+  }
+  @media (max-width: 480px) {
+    .reviews-grid-{{ section.id }} {
+      column-count: 1;
+    }
+  }
+</style>
+
+<div class="reviews-section-{{ section.id }}">
+  <div class="reviews-container-{{ section.id }}">
+    {%- if section.settings.title != blank -%}
+      <h2 class="reviews-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+
+    <div class="reviews-grid-{{ section.id }}">
+      {%- for block in section.blocks -%}
+        <div class="review-card-{{ section.id }}">
+          {%- if block.settings.image != blank -%}
+            <img
+              src="{{ block.settings.image | image_url: width: 500 }}"
+              alt="{{ block.settings.image.alt | default: 'Foto de cliente' | escape }}"
+              class="review-card-image-{{ section.id }}"
+              loading="lazy"
+            >
+          {%- endif -%}
+
+          <div class="review-stars-{{ section.id }}">
+            {%- for i in (1..block.settings.rating) -%}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.868 2.884c.321-.662 1.215-.662 1.536 0l1.83 3.75 4.14.602c.73.106 1.02.998.494 1.506l-2.996 2.92.707 4.124c.124.727-.638 1.28-1.296.942L12 14.934l-3.71 1.95c-.658.338-1.42-.215-1.296-.942l.707-4.124-2.996-2.92c-.527-.508-.236-1.4.494-1.506l4.14-.602 1.83-3.75z" clip-rule="evenodd" />
+              </svg>
+            {%- endfor -%}
+          </div>
+
+          <h3 class="review-author-{{ section.id }}">
+            {{ block.settings.author | escape }}
+            {%- if block.settings.is_verified -%}
+              <span class="verified-badge">✔ Verified</span>
+            {%- endif -%}
+          </h3>
+
+          <div class="review-text-{{ section.id }}">
+            {{ block.settings.text }}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Reseñas de Clientes",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "LO QUE DICEN NUESTROS CLIENTES"
+    },
+    {
+      "type": "header",
+      "content": "Estilos"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo de la Sección",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del Título",
+      "default": "#f4af23"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Fondo de las Tarjetas",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Color del Texto de las Tarjetas",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 20, "max": 120, "step": 4, "unit": "px",
+      "label": "Espaciado vertical",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Reseña",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Foto del Cliente"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Nombre del Cliente",
+          "default": "Nombre Apellido"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_verified",
+          "label": "Cliente Verificado",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Calificación (Estrellas)",
+          "default": 5
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Texto de la Reseña",
+          "default": "<p>Escribe aquí la reseña del cliente. ¡Un texto breve y directo funciona mejor!</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reseñas de Clientes",
+      "blocks": [
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ]
+}
+{% endschema %}

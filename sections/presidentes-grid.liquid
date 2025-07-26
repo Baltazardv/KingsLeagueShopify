@@ -1,0 +1,219 @@
+{% comment %}
+  Sección para mostrar una cuadrícula de "presidentes".
+  - En escritorio, se muestra como una cuadrícula.
+  - En móviles, se convierte en un carrusel con scroll horizontal.
+{% endcomment %}
+
+<style>
+  .presidents-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background-color: #000;
+  }
+  .presidents-title-{{ section.id }} {
+    color: #f4af23;
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+  }
+  .presidents-grid-container-{{ section.id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .presidents-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+  .president-card-{{ section.id }} {
+    position: relative;
+    height: 400px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+  .president-card-{{ section.id }}:hover {
+    transform: scale(1.03);
+  }
+  .president-card-overlay-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent 60%);
+  }
+  .president-card-content-{{ section.id }} {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .president-name-{{ section.id }} {
+    font-family: 'Archivo', sans-serif;
+    font-weight: bold;
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+  .president-team-{{ section.id }} {
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    background: linear-gradient(90deg, #FFD700, #F59E0B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .president-logo-{{ section.id }} {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+
+  /* --- INICIO DE LA MODIFICACIÓN PARA MÓVILES --- */
+  @media (max-width: 767px) {
+    .presidents-grid-container-{{ section.id }} {
+      max-width: 100%;
+      padding: 0;
+    }
+    .presidents-grid-{{ section.id }} {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 0 1rem 1.5rem 1rem; /* Añade espacio para el scroll y en los bordes */
+      grid-template-columns: none; /* Anula el grid en móvil */
+      gap: 1rem; /* Reduce el espacio entre tarjetas */
+    }
+
+    /* Estilos para la barra de scroll */
+    .presidents-grid-{{ section.id }}::-webkit-scrollbar {
+      height: 8px;
+    }
+    .presidents-grid-{{ section.id }}::-webkit-scrollbar-track {
+      background: #1f1f1f;
+      border-radius: 4px;
+    }
+    .presidents-grid-{{ section.id }}::-webkit-scrollbar-thumb {
+      background-color: #f4af23;
+      border-radius: 4px;
+    }
+
+    .president-card-{{ section.id }} {
+      flex: 0 0 80%; /* Cada tarjeta ocupa el 80% del ancho de la pantalla */
+      max-width: 300px;
+      scroll-snap-align: start;
+    }
+  }
+  /* --- FIN DE LA MODIFICACIÓN PARA MÓVILES --- */
+</style>
+
+<div class="presidents-section-{{ section.id }}">
+  {% if section.settings.title != blank %}
+    <h2 class="presidents-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+  {% endif %}
+
+  <div class="presidents-grid-container-{{ section.id }}">
+    <div class="presidents-grid-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div
+          class="president-card-{{ section.id }}"
+          style="background-image: url('{{ block.settings.background_image | image_url: width: 600 }}');"
+        >
+          <div class="president-card-overlay-{{ section.id }}"></div>
+          <div class="president-card-content-{{ section.id }}">
+            <div>
+              {% if block.settings.name != blank %}
+                <h3 class="president-name-{{ section.id }}">{{ block.settings.name | escape }}</h3>
+              {% endif %}
+              {% if block.settings.team_name != blank %}
+                <p class="president-team-{{ section.id }}">{{ block.settings.team_name | escape }}</p>
+              {% endif %}
+            </div>
+            {% if block.settings.logo != blank %}
+              <img
+                src="{{ block.settings.logo | image_url: width: 140 }}"
+                alt="{{ block.settings.team_name | escape }}"
+                class="president-logo-{{ section.id }}"
+                loading="lazy"
+              >
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Grid de Presidentes",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "LLEVA EL ESCUDO DE TU PRESIDENTE"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0, "max": 100, "step": 4, "unit": "px",
+      "label": "Espaciado superior",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0, "max": 100, "step": 4, "unit": "px",
+      "label": "Espaciado inferior",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "presidente",
+      "name": "Presidente",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "background_image",
+          "label": "Imagen de fondo del presidente"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nombre del Presidente",
+          "default": "'Chicharito' Hernández"
+        },
+        {
+          "type": "text",
+          "id": "team_name",
+          "label": "Nombre del Equipo",
+          "default": "Olimpo United"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo del Equipo"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Grid de Presidentes"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,210 @@
+{% comment %}
+  Sección para destacar un producto específico con una imagen y texto.
+  - Permite seleccionar un producto para vincular toda la sección.
+  - Puedes usar una imagen personalizada o la imagen principal del producto.
+  - Nueva opción para diseño en escritorio (apilado o lado a lado).
+{% endcomment %}
+
+<style>
+  .product-feature-section-{{ section.id }} {
+    padding: {{ section.settings.padding_vertical }}px 0;
+  }
+
+  .product-feature-container-{{ section.id }} {
+    max-width: {% if section.settings.desktop_layout == 'side_by_side' %}900px{% else %}500px{% endif %};
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .product-feature-link-{{ section.id }} {
+    display: block;
+    text-decoration: none;
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    border-radius: 1rem; /* Esquinas redondeadas */
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .product-feature-link-{{ section.id }}:hover {
+    transform: translateY(-5px);
+  }
+
+  .product-feature-image-wrapper-{{ section.id }} {
+    padding: 3rem 2rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .product-feature-image-wrapper-{{ section.id }} img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .product-feature-text-wrapper-{{ section.id }} {
+    padding: 1rem 2rem 3rem;
+    text-align: center;
+  }
+
+  .product-feature-title-{{ section.id }} {
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .product-feature-text-{{ section.id }} {
+    font-family: 'Archivo', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .product-feature-text-{{ section.id }} p {
+    margin: 0;
+  }
+
+  /* --- INICIO DE LA MODIFICACIÓN PARA ESCRITORIO --- */
+  @media (min-width: 768px) {
+    .product-feature-link-{{ section.id }}.layout--side-by-side {
+      display: flex;
+      align-items: center;
+    }
+    .layout--side-by-side .product-feature-image-wrapper-{{ section.id }} {
+      flex: 1 1 50%;
+      padding: 2rem;
+    }
+    .layout--side-by-side .product-feature-text-wrapper-{{ section.id }} {
+      flex: 1 1 50%;
+      text-align: left;
+      padding: 2rem;
+    }
+  }
+  /* --- FIN DE LA MODIFICACIÓN PARA ESCRITORIO --- */
+</style>
+
+{%- liquid
+  assign featured_product = section.settings.featured_product
+  assign custom_image = section.settings.image
+-%}
+
+<div class="product-feature-section-{{ section.id }}">
+  <div class="product-feature-container-{{ section.id }}">
+    <a
+      href="{{ featured_product.url | default: '#' }}"
+      class="product-feature-link-{{ section.id }} layout--{{ section.settings.desktop_layout }}"
+    >
+      <div class="product-feature-image-wrapper-{{ section.id }}">
+        {%- if custom_image != blank -%}
+          <img
+            src="{{ custom_image | image_url: width: 500 }}"
+            alt="{{ custom_image.alt | default: section.settings.title | escape }}"
+            width="250"
+            loading="lazy"
+          >
+        {%- elsif featured_product.featured_image != blank -%}
+          <img
+            src="{{ featured_product.featured_image | image_url: width: 500 }}"
+            alt="{{ featured_product.featured_image.alt | default: section.settings.title | escape }}"
+            width="250"
+            loading="lazy"
+          >
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+
+      <div class="product-feature-text-wrapper-{{ section.id }}">
+        {%- if section.settings.title != blank -%}
+          <h3 class="product-feature-title-{{ section.id }}">{{ section.settings.title | escape }}</h3>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="product-feature-text-{{ section.id }}">
+            {{ section.settings.text }}
+          </div>
+        {%- endif -%}
+      </div>
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Producto Destacado",
+  "settings": [
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Seleccionar Producto"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "desktop_layout",
+      "label": "Diseño en Escritorio",
+      "options": [
+        {
+          "value": "stacked",
+          "label": "Apilado (Imagen arriba)"
+        },
+        {
+          "value": "side_by_side",
+          "label": "Lado a Lado (Imagen a la izquierda)"
+        }
+      ],
+      "default": "stacked"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen Personalizada (Opcional)",
+      "info": "Si dejas esto en blanco, se usará la imagen principal del producto seleccionado."
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Free Shipping"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texto",
+      "default": "<p>Pair text with an image to focus on your chosen product. Add details on availability, style, or even provide a review.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Estilos"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del Texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 0, "max": 100, "step": 4, "unit": "px",
+      "label": "Espaciado vertical",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Producto Destacado"
+    }
+  ]
+}
+{% endschema %}

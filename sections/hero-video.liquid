@@ -1,0 +1,203 @@
+{% comment %}
+  Sección de Hero con video de fondo, títulos y un botón.
+  Todos los elementos son configurables desde el editor de temas de Shopify.
+{% endcomment %}
+
+{%- liquid
+  assign video_url = section.settings.video_url
+  assign fallback_image = section.settings.fallback_image
+-%}
+
+<style>
+  #hero-video-section-{{ section.id }} {
+    position: relative;
+    height: 100vh;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+  }
+  #hero-video-background-{{ section.id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    object-fit: cover;
+  }
+  .hero-content-{{ section.id }} {
+    position: relative;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(5px);
+  }
+  .hero-logo-{{ section.id }} {
+    max-height: {{ section.settings.logo_height }}px;
+    margin: 0 auto 1rem;
+  }
+  .hero-title-{{ section.id }} {
+    font-family: 'Termina Test', sans-serif; /* Asegúrate de que esta fuente esté cargada */
+    font-weight: 900;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .hero-subtitle-{{ section.id }} {
+    font-family: 'Matrice', sans-serif; /* Asegúrate de que esta fuente esté cargada */
+    font-weight: 900;
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    background: linear-gradient(90deg, #FFD700, #F59E0B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+  }
+  .hero-button-{{ section.id }} {
+    background: linear-gradient(90deg, #F59E0B, #D97706);
+    color: white;
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    padding: 0.75rem 2.5rem;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+  }
+  .hero-button-{{ section.id }}:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+  }
+</style>
+
+<div id="hero-video-section-{{ section.id }}">
+  {% if video_url != blank %}
+    <video
+      id="hero-video-background-{{ section.id }}"
+      autoplay
+      muted
+      loop
+      playsinline
+      {% if fallback_image != blank %}
+        poster="{{ fallback_image | image_url }}"
+      {% endif %}
+    >
+      <source src="{{ video_url }}" type="video/mp4">
+    </video>
+  {% elsif fallback_image != blank %}
+    <img
+      id="hero-video-background-{{ section.id }}"
+      src="{{ fallback_image | image_url: width: 1920 }}"
+      alt="{{ fallback_image.alt | default: 'Background image' }}"
+      loading="lazy"
+      width="1920"
+      height="1080"
+    >
+  {% else %}
+    <div id="hero-video-background-{{ section.id }}" style="background-color: #000;"></div>
+  {% endif %}
+
+  <div class="hero-content-{{ section.id }}">
+    {% if section.settings.logo != blank %}
+      <img
+        src="{{ section.settings.logo | image_url: width: 400 }}"
+        alt="{{ section.settings.logo.alt | default: 'Logo' }}"
+        class="hero-logo-{{ section.id }}"
+        width="{{ section.settings.logo_height | times: section.settings.logo.aspect_ratio | round }}"
+        height="{{ section.settings.logo_height }}"
+      >
+    {% endif %}
+
+    {% if section.settings.title != blank %}
+      <h1 class="hero-title-{{ section.id }}">{{ section.settings.title | escape }}</h1>
+    {% endif %}
+
+    {% if section.settings.subtitle != blank %}
+      <h2 class="hero-subtitle-{{ section.id }}">{{ section.settings.subtitle | escape }}</h2>
+    {% endif %}
+
+    {% if section.settings.button_text != blank and section.settings.button_link != blank %}
+      <a href="{{ section.settings.button_link }}" class="hero-button-{{ section.id }}">
+        {{ section.settings.button_text | escape }}
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero con Video",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido de Video e Imagen"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "URL del Video (MP4)",
+      "info": "Sube tu video a 'Contenido > Archivos' y pega el enlace aquí."
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Imagen de Respaldo",
+      "info": "Se muestra si el video no carga o en móviles. Sube una imagen del primer fotograma del video."
+    },
+    {
+      "type": "header",
+      "content": "Contenido de Texto y Botón"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura del Logo",
+      "default": 120
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título Principal",
+      "default": "EL RELOJ DE LA LIGA"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "LA PRECISIÓN DE LOS REYES"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del Botón",
+      "default": "HAZLO TUYO"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del Botón"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero con Video"
+    }
+  ]
+}
+{% endschema %}

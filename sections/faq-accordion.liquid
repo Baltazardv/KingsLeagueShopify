@@ -1,0 +1,205 @@
+{% comment %}
+  Sección de Preguntas Frecuentes (FAQ) con estilo de acordeón.
+  - Utiliza bloques para que cada pregunta sea un elemento editable.
+  - El acordeón se crea con las etiquetas <details> y <summary> de HTML para
+    mayor accesibilidad y rendimiento, sin necesidad de JavaScript.
+{% endcomment %}
+
+<style>
+  .faq-section-{{ section.id }} {
+    padding: {{ section.settings.padding_vertical }}px 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .faq-container-{{ section.id }} {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .faq-title-{{ section.id }} {
+    color: {{ section.settings.title_color }};
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 3rem;
+  }
+
+  .faq-accordion-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item-{{ section.id }} {
+    background-color: {{ section.settings.item_background_color }};
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 0.75rem;
+    padding: 0.5rem 1.5rem;
+    transition: background-color 0.3s ease;
+  }
+
+  .faq-item-{{ section.id }}[open] {
+    background-color: {{ section.settings.item_background_color_open }};
+  }
+
+  .faq-question-{{ section.id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 1rem 0;
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    color: {{ section.settings.question_color }};
+    list-style: none; /* Elimina el marcador por defecto de <summary> */
+  }
+
+  .faq-question-{{ section.id }}::-webkit-details-marker {
+    display: none; /* Oculta el marcador en Chrome/Safari */
+  }
+
+  .faq-answer-{{ section.id }} {
+    padding-bottom: 1.5rem;
+    color: {{ section.settings.answer_color }};
+    font-family: 'Archivo', sans-serif;
+    line-height: 1.6;
+  }
+
+  .faq-icon-{{ section.id }} {
+    font-size: 2rem;
+    font-weight: bold;
+    color: {{ section.settings.icon_color }};
+    transition: transform 0.3s ease;
+  }
+
+  .faq-item-{{ section.id }}[open] summary .faq-icon-{{ section.id }} {
+    transform: rotate(45deg);
+  }
+</style>
+
+<div class="faq-section-{{ section.id }}">
+  <div class="faq-container-{{ section.id }}">
+    {%- if section.settings.title != blank -%}
+      <h2 class="faq-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+
+    <div class="faq-accordion-{{ section.id }}">
+      {%- for block in section.blocks -%}
+        <details class="faq-item-{{ section.id }}">
+          <summary class="faq-question-{{ section.id }}">
+            {{ block.settings.question | escape }}
+            <span class="faq-icon-{{ section.id }}">+</span>
+          </summary>
+          <div class="faq-answer-{{ section.id }}">
+            {{ block.settings.answer }}
+          </div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Preguntas Frecuentes",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Preguntas Frecuentes"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo de la Sección",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del Título",
+      "default": "#f4af23"
+    },
+    {
+      "type": "color",
+      "id": "item_background_color",
+      "label": "Fondo de la Pregunta (Cerrada)",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "item_background_color_open",
+      "label": "Fondo de la Pregunta (Abierta)",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Color del Texto de la Pregunta",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Color del Texto de la Respuesta",
+      "default": "#a0a0a0"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Color del Icono (+)",
+      "default": "#f4af23"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 20, "max": 120, "step": 4, "unit": "px",
+      "label": "Espaciado vertical",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "Pregunta",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Pregunta",
+          "default": "¿ES COMPATIBLE CON MI CELULAR?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Respuesta",
+          "default": "<p>Sí, el smartwatch KLSW-01 es totalmente compatible con los sistemas operativos iOS y Android. Solo tienes que descargar la aplicación correspondiente para sincronizarlo y recibir notificaciones.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Preguntas Frecuentes",
+      "blocks": [
+        { "type": "faq_item" },
+        { "type": "faq_item", "settings": { "question": "¿PUEDO NADAR CON ÉL?" } },
+        { "type": "faq_item", "settings": { "question": "¿LA CORREA DE CAMBIA?" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

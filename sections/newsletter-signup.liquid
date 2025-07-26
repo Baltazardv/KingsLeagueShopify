@@ -1,0 +1,221 @@
+{% comment %}
+  Sección de pie de página con imagen y formulario de suscripción a newsletter.
+  - Permite añadir una imagen superior opcional.
+  - Todos los textos son editables.
+  - El formulario se integra con la lista de clientes de Shopify.
+{% endcomment %}
+
+<style>
+  .newsletter-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    padding: {{ section.settings.padding_vertical }}px 0;
+  }
+
+  .newsletter-container-{{ section.id }} {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    text-align: center;
+  }
+
+  .newsletter-image-wrapper-{{ section.id }} {
+    margin-bottom: 2rem;
+  }
+
+  .newsletter-image-wrapper-{{ section.id }} img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem; /* Esquinas redondeadas */
+  }
+
+  .newsletter-content-{{ section.id }} {
+    color: {{ section.settings.text_color }};
+  }
+
+  .newsletter-pretitle-{{ section.id }} {
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+  }
+
+  .newsletter-title-{{ section.id }} {
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    text-transform: uppercase;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .newsletter-subtitle-{{ section.id }} {
+    font-family: 'Archivo', sans-serif;
+    font-size: 1rem;
+    opacity: 0.8;
+    margin-bottom: 2.5rem;
+  }
+
+  .newsletter-form-{{ section.id }} {
+    position: relative;
+    max-width: 450px;
+    margin: 0 auto;
+  }
+
+  .newsletter-form__input-{{ section.id }} {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.5 }};
+    color: {{ section.settings.text_color }};
+    padding: 0.75rem 2.5rem 0.75rem 0.5rem;
+    font-size: 1rem;
+  }
+
+  .newsletter-form__input-{{ section.id }}:focus {
+    outline: none;
+    border-bottom-color: {{ section.settings.text_color }};
+  }
+
+  .newsletter-form__button-{{ section.id }} {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: {{ section.settings.text_color }};
+    cursor: pointer;
+  }
+
+  .newsletter-form__button-{{ section.id }} svg {
+    width: 24px;
+    height: 24px;
+  }
+</style>
+
+<div class="newsletter-section-{{ section.id }}">
+  <div class="newsletter-container-{{ section.id }}">
+    {%- if section.settings.image != blank -%}
+      <div class="newsletter-image-wrapper-{{ section.id }}">
+        <img
+          src="{{ section.settings.image | image_url: width: 1400 }}"
+          alt="{{ section.settings.image.alt | default: 'Promotional image' | escape }}"
+          width="700"
+          height="{{ 700 | divided_by: section.settings.image.aspect_ratio | round }}"
+          loading="lazy"
+        >
+      </div>
+    {%- endif -%}
+
+    <div class="newsletter-content-{{ section.id }}">
+      {%- if section.settings.pretitle != blank -%}
+        <p class="newsletter-pretitle-{{ section.id }}">{{ section.settings.pretitle | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="newsletter-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subtitle != blank -%}
+        <p class="newsletter-subtitle-{{ section.id }}">{{ section.settings.subtitle | escape }}</p>
+      {%- endif -%}
+
+      {%- comment %} --- CORRECCIÓN: Se cambió el tipo de formulario a 'contact' --- {%- endcomment %}
+      {%- form 'contact', id: 'ContactForm' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="newsletter-form-{{ section.id }}">
+          <input
+            id="NewsletterForm--{{ section.id }}"
+            type="email"
+            name="contact[email]"
+            class="newsletter-form__input-{{ section.id }}"
+            value=""
+            aria-required="true"
+            autocorrect="off"
+            autocapitalize="off"
+            autocomplete="email"
+            placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
+            required
+          >
+          <button
+            type="submit"
+            class="newsletter-form__button-{{ section.id }}"
+            name="commit"
+            aria-label="{{ 'general.newsletter_form.submit' | t }}"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+            </svg>
+          </button>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Suscripción Newsletter",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen superior (opcional)"
+    },
+    {
+      "type": "header",
+      "content": "Contenido de Texto"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "Pre-título",
+      "default": "🔥 ¡NO TE PIERDAS NADA! 🔥"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título Principal",
+      "default": "Recibe OFERTAS EXCLUSIVAS, REGALOS y BENEFICIOS ÚNICOS"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "¡Sé el primero en enterarte de todo en la Kings League Americas!"
+    },
+    {
+      "type": "header",
+      "content": "Estilos"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del Texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 20, "max": 120, "step": 4, "unit": "px",
+      "label": "Espaciado vertical",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Suscripción Newsletter"
+    }
+  ]
+}
+{% endschema %}
