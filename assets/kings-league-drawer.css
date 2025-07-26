@@ -1,0 +1,466 @@
+/* ========================================
+   MENÚ MÓVIL - ESTILO KINGS LEAGUE
+   ======================================== */
+
+/* Drawer/Menu móvil principal */
+.menu-drawer {
+  background: linear-gradient(135deg, var(--kl-darker-bg) 0%, #000000 100%) !important;
+  border-right: 1px solid var(--kl-border-gray) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+.menu-drawer__inner-container {
+  background: transparent !important;
+  height: 100vh !important;
+  padding: 0 !important;
+}
+
+/* Búsqueda en el drawer - estilo Kings League */
+.menu-drawer__search {
+  padding: 2rem !important;
+  border-bottom: 1px solid var(--kl-border-gray) !important;
+  background: rgba(244, 210, 74, 0.02) !important;
+}
+
+.menu-drawer__search-form .search__input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--kl-border-gray) !important;
+  border-radius: 12px !important;
+  padding: 1rem 4rem 1rem 1.5rem !important;
+  color: var(--kl-text-white) !important;
+  font-size: 1rem !important;
+  backdrop-filter: blur(10px) !important;
+  transition: var(--kl-transition) !important;
+}
+
+.menu-drawer__search-form .search__input:focus {
+  border-color: var(--kl-primary-yellow) !important;
+  box-shadow: 0 0 0 2px rgba(244, 210, 74, 0.2) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.menu-drawer__search-form .search__input::placeholder {
+  color: var(--kl-text-gray) !important;
+  font-style: italic !important;
+}
+
+.menu-drawer__search-form .search__button {
+  background: transparent !important;
+  border: none !important;
+  right: 0.5rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 3rem !important;
+  height: 3rem !important;
+  border-radius: 8px !important;
+  transition: var(--kl-transition) !important;
+}
+
+.menu-drawer__search-form .search__button:hover {
+  background: rgba(244, 210, 74, 0.1) !important;
+}
+
+.menu-drawer__search-form .icon-search {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  fill: var(--kl-text-gray) !important;
+  transition: var(--kl-transition) !important;
+}
+
+.menu-drawer__search-form .search__button:hover .icon-search {
+  fill: var(--kl-primary-yellow) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Elementos del menú */
+.menu-drawer__navigation-container {
+  padding: 0 !important;
+  height: calc(100vh - 120px) !important;
+  overflow-y: auto !important;
+}
+
+.menu-drawer__menu.has-submenu {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.menu-drawer__menu-item {
+  padding: 1.5rem 2rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: var(--kl-text-white) !important;
+  font-size: 1.1rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  transition: var(--kl-transition) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  position: relative !important;
+}
+
+.menu-drawer__menu-item::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 4px !important;
+  background: linear-gradient(135deg, var(--kl-primary-yellow), var(--kl-primary-gold)) !important;
+  transform: scaleY(0) !important;
+  transition: var(--kl-transition) !important;
+  border-radius: 0 2px 2px 0 !important;
+}
+
+.menu-drawer__menu-item:hover::before {
+  transform: scaleY(1) !important;
+}
+
+.menu-drawer__menu-item:hover {
+  background: rgba(244, 210, 74, 0.08) !important;
+  color: var(--kl-primary-yellow) !important;
+  transform: translateX(8px) !important;
+  padding-left: 2.5rem !important;
+}
+
+/* Iconos de flecha en el menú */
+.menu-drawer__menu-item .svg-wrapper {
+  opacity: 0.6 !important;
+  transition: var(--kl-transition) !important;
+}
+
+.menu-drawer__menu-item:hover .svg-wrapper {
+  opacity: 1 !important;
+  fill: var(--kl-primary-yellow) !important;
+}
+
+/* Submenús */
+.menu-drawer__submenu {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-left: 2px solid var(--kl-primary-yellow) !important;
+  margin-left: 1rem !important;
+  border-radius: 0 8px 8px 0 !important;
+}
+
+.menu-drawer__submenu .menu-drawer__menu-item {
+  padding-left: 3rem !important;
+  font-size: 0.95rem !important;
+  color: var(--kl-text-gray) !important;
+  text-transform: none !important;
+}
+
+.menu-drawer__submenu .menu-drawer__menu-item:hover {
+  color: var(--kl-primary-yellow) !important;
+  background: rgba(244, 210, 74, 0.05) !important;
+}
+
+/* Botón de cerrar submenú */
+.menu-drawer__close-button {
+  padding: 1rem 2rem !important;
+  color: var(--kl-text-gray) !important;
+  font-size: 0.9rem !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: var(--kl-transition) !important;
+}
+
+.menu-drawer__close-button:hover {
+  color: var(--kl-primary-yellow) !important;
+  background: rgba(244, 210, 74, 0.05) !important;
+}
+
+/* Utility links en el drawer */
+.menu-drawer__utility-links {
+  padding: 2rem !important;
+  border-top: 1px solid var(--kl-border-gray) !important;
+  background: linear-gradient(135deg, 
+    rgba(244, 210, 74, 0.03) 0%, 
+    rgba(255, 107, 53, 0.03) 100%) !important;
+  margin-top: auto !important;
+}
+
+/* Link de cuenta en móvil */
+.menu-drawer__account {
+  display: flex !important;
+  align-items: center !important;
+  padding: 1rem 0 !important;
+  color: var(--kl-text-white) !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: var(--kl-transition) !important;
+  border-radius: 8px !important;
+}
+
+.menu-drawer__account:hover {
+  color: var(--kl-primary-yellow) !important;
+  background: rgba(244, 210, 74, 0.05) !important;
+  transform: translateX(4px) !important;
+}
+
+.menu-drawer__account .custom-svg-icon {
+  margin-right: 0.75rem !important;
+  fill: currentColor !important;
+}
+
+/* Localización en móvil */
+.menu-drawer__localization {
+  margin-top: 1.5rem !important;
+}
+
+.menu-drawer__localization .localization-form {
+  margin-bottom: 1rem !important;
+}
+
+.menu-drawer__localization select {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--kl-border-gray) !important;
+  color: var(--kl-text-white) !important;
+  border-radius: 8px !important;
+  padding: 0.75rem !important;
+  font-size: 0.9rem !important;
+}
+
+/* Redes sociales en móvil */
+.list-social {
+  display: flex !important;
+  gap: 1rem !important;
+  margin-top: 1.5rem !important;
+  justify-content: center !important;
+}
+
+.list-social__item {
+  list-style: none !important;
+}
+
+.list-social__link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--kl-border-gray) !important;
+  border-radius: 50% !important;
+  color: var(--kl-text-gray) !important;
+  transition: var(--kl-transition) !important;
+}
+
+.list-social__link:hover {
+  background: var(--kl-primary-yellow) !important;
+  border-color: var(--kl-primary-yellow) !important;
+  color: var(--kl-darker-bg) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 8px 20px rgba(244, 210, 74, 0.3) !important;
+}
+
+.list-social__link .svg-wrapper {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Overlay del menú */
+.menu-drawer-container[open] summary::before {
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+}
+
+/* Botón hamburguesa */
+.header__icon--menu {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--kl-border-gray) !important;
+  border-radius: 8px !important;
+  transition: var(--kl-transition) !important;
+}
+
+.header__icon--menu:hover {
+  background: rgba(244, 210, 74, 0.1) !important;
+  border-color: var(--kl-primary-yellow) !important;
+  transform: scale(1.05) !important;
+}
+
+.header__icon--menu .icon {
+  fill: var(--kl-text-white) !important;
+  transition: var(--kl-transition) !important;
+}
+
+.header__icon--menu:hover .icon {
+  fill: var(--kl-primary-yellow) !important;
+}
+
+/* Animación de apertura del menú */
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.menu-drawer-container[open] .menu-drawer {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+/* Personalización del scrollbar en el menú */
+.menu-drawer__navigation-container::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.menu-drawer__navigation-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.menu-drawer__navigation-container::-webkit-scrollbar-thumb {
+  background: var(--kl-primary-yellow) !important;
+  border-radius: 2px !important;
+}
+
+.menu-drawer__navigation-container::-webkit-scrollbar-thumb:hover {
+  background: var(--kl-primary-gold) !important;
+}
+
+/* ========================================
+   BARRA DE ANUNCIOS SUPERIOR
+   ======================================== */
+
+.announcement-bar {
+  background: linear-gradient(135deg, var(--kl-primary-yellow), var(--kl-primary-gold)) !important;
+  color: var(--kl-darker-bg) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-size: 0.85rem !important;
+}
+
+.announcement-bar__message {
+  color: var(--kl-darker-bg) !important;
+  font-weight: 600 !important;
+}
+
+.announcement-bar__link:hover {
+  text-decoration: underline !important;
+  color: var(--kl-darker-bg) !important;
+}
+
+/* Botones de navegación del anuncio */
+.announcement-bar .slider-button {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-radius: 50% !important;
+  color: var(--kl-darker-bg) !important;
+  transition: var(--kl-transition) !important;
+}
+
+.announcement-bar .slider-button:hover {
+  background: rgba(0, 0, 0, 0.2) !important;
+  transform: scale(1.1) !important;
+}
+
+/* ========================================
+   RESPONSIVO ESPECÍFICO PARA EL MENÚ
+   ======================================== */
+
+@media screen and (max-width: 749px) {
+  .menu-drawer {
+    width: 320px !important;
+    max-width: 85vw !important;
+  }
+  
+  .menu-drawer__search {
+    padding: 1.5rem !important;
+  }
+  
+  .menu-drawer__menu-item {
+    padding: 1.25rem 1.5rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .menu-drawer__utility-links {
+    padding: 1.5rem !important;
+  }
+}
+
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .menu-drawer {
+    width: 380px !important;
+  }
+}
+
+/* ========================================
+   ESTADOS ESPECIALES DEL MENÚ
+   ======================================== */
+
+/* Elemento activo en el menú */
+.menu-drawer__menu-item--active {
+  background: rgba(244, 210, 74, 0.1) !important;
+  color: var(--kl-primary-yellow) !important;
+  border-left: 4px solid var(--kl-primary-yellow) !important;
+}
+
+.menu-drawer__menu-item--active::before {
+  transform: scaleY(1) !important;
+}
+
+/* Loading state para el menú */
+.menu-drawer.loading {
+  opacity: 0.7 !important;
+  pointer-events: none !important;
+}
+
+/* Focus states para accesibilidad */
+.menu-drawer__menu-item:focus-visible {
+  outline: 2px solid var(--kl-primary-yellow) !important;
+  outline-offset: -2px !important;
+  background: rgba(244, 210, 74, 0.1) !important;
+}
+
+.menu-drawer__search-form .search__input:focus-visible {
+  outline: 2px solid var(--kl-primary-yellow) !important;
+  outline-offset: 2px !important;
+}
+
+/* ========================================
+   AJUSTES FINALES
+   ======================================== */
+
+/* Asegurar que el menú esté por encima de todo */
+.menu-drawer-container {
+  z-index: 1000 !important;
+}
+
+.menu-drawer {
+  z-index: 1001 !important;
+}
+
+/* Prevenir scroll del body cuando el menú está abierto */
+.menu-drawer-container[open] {
+  overflow: hidden !important;
+}
+
+body:has(.menu-drawer-container[open]) {
+  overflow: hidden !important;
+}
+
+/* Transiciones suaves para todos los elementos del menú */
+.menu-drawer * {
+  transition: var(--kl-transition) !important;
+}
+
+/* Override para asegurar colores correctos */
+.menu-drawer,
+.menu-drawer * {
+  color: inherit !important;
+}
+
+.menu-drawer a {
+  color: var(--kl-text-white) !important;
+}
+
+.menu-drawer a:hover {
+  color: var(--kl-primary-yellow) !important;
+}important

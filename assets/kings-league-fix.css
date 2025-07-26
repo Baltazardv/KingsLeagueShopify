@@ -1,0 +1,565 @@
+/* ========================================
+   KINGS LEAGUE RELOJES - FIX COMPLETO
+   CSS que SÍ funciona y se ve exactamente como Kings League
+   ======================================== */
+
+/* ========================================
+   1. RESET Y BASE OBLIGATORIO
+   ======================================== */
+
+/* Forzar tema oscuro en TODA la página */
+html, body, main, #MainContent, .shopify-section, .page-width {
+  background-color: #1a1a1a !important;
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+/* Forzar tema oscuro en contenedores */
+.color-scheme-1, .color-scheme-2, .color-scheme-3, .gradient {
+  background-color: #1a1a1a !important;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  color: #ffffff !important;
+}
+
+/* ========================================
+   2. HEADER - FIX COMPLETO
+   ======================================== */
+
+/* Header wrapper con fondo sólido */
+.header-wrapper, .section-header {
+  background: #0f0f0f !important;
+  background-color: #0f0f0f !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 999 !important;
+  width: 100% !important;
+}
+
+/* Header interno */
+.header {
+  background: transparent !important;
+  padding: 1rem 2rem !important;
+  height: auto !important;
+  min-height: 70px !important;
+  display: grid !important;
+  grid-template-areas: "hamburger logo icons" !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 1rem !important;
+}
+
+/* Logo en el header */
+.header__heading, .header__heading-link {
+  justify-self: center !important;
+  grid-area: logo !important;
+}
+
+.header__heading-logo {
+  max-height: 45px !important;
+  width: auto !important;
+  filter: brightness(1.2) !important;
+}
+
+/* Iconos del header */
+.header__icons {
+  grid-area: icons !important;
+  justify-self: end !important;
+  display: flex !important;
+  gap: 0.5rem !important;
+  align-items: center !important;
+}
+
+.header__icon {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  padding: 0.75rem !important;
+  color: #ffffff !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.header__icon:hover {
+  background: rgba(244, 210, 74, 0.15) !important;
+  border-color: #F4D24A !important;
+  transform: translateY(-2px) !important;
+  color: #F4D24A !important;
+}
+
+.header__icon svg, .header__icon .svg-wrapper {
+  width: 20px !important;
+  height: 20px !important;
+  fill: currentColor !important;
+}
+
+/* Menu hamburguesa */
+.header__icon--menu {
+  grid-area: hamburger !important;
+  justify-self: start !important;
+}
+
+/* Cart bubble */
+.cart-count-bubble {
+  background: linear-gradient(135deg, #F4D24A, #FFD700) !important;
+  color: #0f0f0f !important;
+  font-weight: 700 !important;
+  border: 2px solid #0f0f0f !important;
+}
+
+/* ========================================
+   3. PRODUCTOS - GRID Y CARDS
+   ======================================== */
+
+/* Grid container */
+.collection, .product-grid, .grid {
+  padding: 2rem 0 !important;
+}
+
+/* Card wrapper - estilo Kings League */
+.card-wrapper, .product-card-wrapper, .grid__item {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  backdrop-filter: blur(10px) !important;
+  position: relative !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.card-wrapper:hover, .product-card-wrapper:hover {
+  transform: translateY(-8px) !important;
+  border-color: rgba(244, 210, 74, 0.4) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(244, 210, 74, 0.2) !important;
+}
+
+/* ========================================
+   4. IMÁGENES DE PRODUCTOS - FIX PRINCIPAL
+   ======================================== */
+
+/* Contenedor de imagen con proporción 3:4 */
+.card__media, .media, .product__media, .card-media {
+  aspect-ratio: 3/4 !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Imágenes dentro del contenedor */
+.card__media img, .media img, .product__media img, .card-media img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 1.5rem !important;
+  transition: transform 0.3s ease !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+.card-wrapper:hover .card__media img,
+.card-wrapper:hover .media img {
+  transform: scale(1.05) !important;
+}
+
+/* ========================================
+   5. CONTENIDO DE PRODUCTOS
+   ======================================== */
+
+/* Información del producto */
+.card__content, .card__information, .card-information {
+  padding: 1.5rem !important;
+  background: transparent !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Título del producto */
+.card__heading, .card-information__text h3, .card__information h3 {
+  color: #ffffff !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin-bottom: 0.75rem !important;
+  transition: color 0.3s ease !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+.card-wrapper:hover .card__heading,
+.card-wrapper:hover .card-information__text h3 {
+  color: #F4D24A !important;
+}
+
+/* Precios */
+.price, .card__price, .price-item {
+  color: #F4D24A !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.price__regular, .price__sale {
+  color: #F4D24A !important;
+}
+
+.price__compare, .price__compare-at {
+  color: #cccccc !important;
+  text-decoration: line-through !important;
+  font-weight: 400 !important;
+}
+
+/* ========================================
+   6. BOTONES - ESTILO KINGS LEAGUE
+   ======================================== */
+
+/* Botón principal */
+.btn, .button, .product-form__cart-submit, .shopify-challenge__button {
+  background: linear-gradient(135deg, #F4D24A, #FFD700) !important;
+  color: #0f0f0f !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 0.875rem 2rem !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 44px !important;
+  width: 100% !important;
+  box-shadow: 0 4px 15px rgba(244, 210, 74, 0.3) !important;
+}
+
+.btn:hover, .button:hover, .product-form__cart-submit:hover {
+  background: linear-gradient(135deg, #FFD700, #F4D24A) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(244, 210, 74, 0.4) !important;
+  color: #0f0f0f !important;
+}
+
+/* ========================================
+   7. TEXTOS Y TIPOGRAFÍA
+   ======================================== */
+
+/* Textos generales */
+body, p, span, div, .text-body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+  color: #cccccc !important;
+  line-height: 1.6 !important;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Links */
+a {
+  color: #cccccc !important;
+  transition: color 0.3s ease !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  color: #F4D24A !important;
+}
+
+/* ========================================
+   8. PÁGINA DE PRODUCTO INDIVIDUAL
+   ======================================== */
+
+/* Gallery de producto */
+.product__media-gallery {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  padding: 1.5rem !important;
+}
+
+.product__media-item {
+  aspect-ratio: 3/4 !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  margin-bottom: 1rem !important;
+}
+
+.product__media-item img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 2rem !important;
+}
+
+/* Información del producto */
+.product__title {
+  color: #ffffff !important;
+  font-size: 2.5rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.2 !important;
+}
+
+.product__description {
+  color: #cccccc !important;
+  font-size: 1.1rem !important;
+  line-height: 1.6 !important;
+  margin-bottom: 2rem !important;
+}
+
+/* ========================================
+   9. FORMULARIOS
+   ======================================== */
+
+.field__input, .select__select, input, select, textarea {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.field__input:focus, .select__select:focus, input:focus, select:focus, textarea:focus {
+  border-color: #F4D24A !important;
+  box-shadow: 0 0 0 2px rgba(244, 210, 74, 0.2) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  outline: none !important;
+}
+
+.field__label, label {
+  color: #cccccc !important;
+}
+
+/* ========================================
+   10. MENÚ MÓVIL
+   ======================================== */
+
+.menu-drawer {
+  background: linear-gradient(135deg, #0f0f0f 0%, #000000 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.menu-drawer__search {
+  padding: 2rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.menu-drawer__search-form .search__input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 1rem 1.5rem !important;
+}
+
+.menu-drawer__menu-item {
+  color: #ffffff !important;
+  padding: 1.5rem 2rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s ease !important;
+}
+
+.menu-drawer__menu-item:hover {
+  background: rgba(244, 210, 74, 0.1) !important;
+  color: #F4D24A !important;
+}
+
+/* ========================================
+   11. FOOTER
+   ======================================== */
+
+.footer {
+  background: #0f0f0f !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #cccccc !important;
+  padding: 3rem 0 !important;
+}
+
+.footer h4, .footer h3, .footer h2 {
+  color: #ffffff !important;
+}
+
+.footer a {
+  color: #cccccc !important;
+}
+
+.footer a:hover {
+  color: #F4D24A !important;
+}
+
+/* ========================================
+   12. RESPONSIVE
+   ======================================== */
+
+@media screen and (max-width: 749px) {
+  .header {
+    padding: 1rem 1.5rem !important;
+    grid-template-columns: auto 1fr auto !important;
+  }
+  
+  .card-wrapper {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .product__title {
+    font-size: 2rem !important;
+  }
+}
+
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .grid__item {
+    width: calc(50% - 0.75rem) !important;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .grid--4-col-desktop .grid__item {
+    width: calc(25% - 1.125rem) !important;
+  }
+  
+  .grid--3-col-desktop .grid__item {
+    width: calc(33.333% - 1rem) !important;
+  }
+  
+  .header {
+    grid-template-areas: "hamburger logo search icons" !important;
+    grid-template-columns: auto 1fr auto auto !important;
+  }
+}
+
+/* ========================================
+   13. FIXES ESPECÍFICOS PARA SHOPIFY
+   ======================================== */
+
+/* Forzar tema en elementos específicos de Shopify */
+.shopify-section-header-sticky,
+.shopify-section-header-hidden,
+.shopify-section-group-header-group {
+  background: #0f0f0f !important;
+}
+
+/* Collection pages */
+.collection-hero {
+  background: #0f0f0f !important;
+  padding: 3rem 0 !important;
+  text-align: center !important;
+}
+
+.collection-hero__title {
+  color: #ffffff !important;
+  font-size: 2.5rem !important;
+  font-weight: 800 !important;
+}
+
+/* Product recommendations */
+.product-recommendations {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  padding: 2rem !important;
+  margin-top: 3rem !important;
+}
+
+/* ========================================
+   14. OVERRIDES FINALES E IMPORTANTES
+   ======================================== */
+
+/* Forzar tema oscuro en TODO */
+* {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Contenedores principales */
+.main-content, #MainContent, .page-width {
+  background: transparent !important;
+}
+
+/* Asegurar que no haya fondos blancos */
+.color-background-1, .color-background-2 {
+  background: #1a1a1a !important;
+}
+
+/* Text selection */
+::selection {
+  background: rgba(244, 210, 74, 0.3) !important;
+  color: #ffffff !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #0f0f0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #F4D24A, #FFD700);
+  border-radius: 4px;
+}
+
+/* ========================================
+   15. ANIMACIONES Y EFECTOS
+   ======================================== */
+
+/* Transiciones suaves */
+*, *::before, *::after {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.7 !important;
+  pointer-events: none !important;
+}
+
+/* Focus states */
+*:focus-visible {
+  outline: 2px solid #F4D24A !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(244, 210, 74, 0.2) !important;
+}
+
+/* ========================================
+   FINAL - ASEGURAR QUE SE APLIQUE TODO
+   ======================================== */
+
+/* Prioridad máxima para el tema oscuro */
+html, body {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+body.gradient {
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+}
+
+/* Asegurar que todos los elementos hijos hereden correctamente */
+.shopify-section * {
+  color: inherit !important;
+}
+
+/* Último override para elementos rebeldes */
+[class*="color-scheme"] {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+}
