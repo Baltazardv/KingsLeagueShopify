@@ -1,5 +1,5 @@
 {% comment %}
-  Sección para un carrusel infinito de logos.
+  Sección para un carrusel infinito de logos que se mueve en reversa.
   - Utiliza bloques para que cada logo sea editable.
   - El carrusel se duplica para un efecto de bucle perfecto.
   - Los logos están siempre a color.
@@ -14,10 +14,30 @@
     position: relative;
   }
 
+  .logo-ticker-section-{{ section.id }}::before,
+  .logo-ticker-section-{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100px;
+    height: 100%;
+    z-index: 2;
+  }
+
+  .logo-ticker-section-{{ section.id }}::before {
+    left: 0;
+    background: linear-gradient(to right, {{ section.settings.background_color }} 20%, rgba(0, 0, 0, 0) 100%);
+  }
+
+  .logo-ticker-section-{{ section.id }}::after {
+    right: 0;
+    background: linear-gradient(to left, {{ section.settings.background_color }} 20%, rgba(0, 0, 0, 0) 100%);
+  }
+
   .logo-ticker-track-wrapper-{{ section.id }} {
     display: flex;
     width: fit-content;
-    animation: scroll-animation-{{ section.id }} var(--animation-duration) linear infinite;
+    animation: scroll-animation-reverse-{{ section.id }} var(--animation-duration) linear infinite;
   }
 
   .logo-ticker-section-{{ section.id }}:hover .logo-ticker-track-wrapper-{{ section.id }} {
@@ -44,12 +64,12 @@
     transform: scale(1.1);
   }
 
-  @keyframes scroll-animation-{{ section.id }} {
+  @keyframes scroll-animation-reverse-{{ section.id }} {
     from {
-      transform: translateX(0);
+      transform: translateX(-50%);
     }
     to {
-      transform: translateX(-50%);
+      transform: translateX(0);
     }
   }
 </style>
@@ -57,43 +77,43 @@
 <div class="logo-ticker-section-{{ section.id }}">
   <div class="logo-ticker-track-wrapper-{{ section.id }}">
     <div class="logo-ticker-track-{{ section.id }}">
-      {%- for block in section.blocks -%}
+      {% for block in section.blocks %}
         <div class="logo-item-{{ section.id }}">
           <a href="{{ block.settings.link | default: '#' }}">
-            {%- if block.settings.logo != blank -%}
+            {% if block.settings.logo != blank %}
               <img
                 src="{{ block.settings.logo | image_url: height: section.settings.logo_height }}"
                 alt="{{ block.settings.logo.alt | escape }}"
                 height="{{ section.settings.logo_height }}"
                 loading="lazy"
               >
-            {%- endif -%}
+            {% endif %}
           </a>
         </div>
-      {%- endfor -%}
+      {% endfor %}
     </div>
     <div class="logo-ticker-track-{{ section.id }}" aria-hidden="true">
-      {%- for block in section.blocks -%}
+      {% for block in section.blocks %}
         <div class="logo-item-{{ section.id }}">
           <a href="{{ block.settings.link | default: '#' }}">
-            {%- if block.settings.logo != blank -%}
+            {% if block.settings.logo != blank %}
               <img
                 src="{{ block.settings.logo | image_url: height: section.settings.logo_height }}"
                 alt="{{ block.settings.logo.alt | escape }}"
                 height="{{ section.settings.logo_height }}"
                 loading="lazy"
               >
-            {%- endif -%}
+            {% endif %}
           </a>
         </div>
-      {%- endfor -%}
+      {% endfor %}
     </div>
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Carrusel de Logos",
+  "name": "Carrusel Logos Inverso",
   "settings": [
     {
       "type": "color",
@@ -109,12 +129,12 @@
       "step": 5,
       "unit": "px",
       "label": "Altura de los logos",
-      "default": 60
+      "default": 40
     },
     {
       "type": "range",
       "id": "speed",
-      "min": 10,
+      "min": 20,
       "max": 200,
       "step": 10,
       "unit": "s",
@@ -153,8 +173,11 @@
   ],
   "presets": [
     {
-      "name": "Carrusel de Logos",
+      "name": "Carrusel Logos Inverso",
       "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
         { "type": "logo" },
         { "type": "logo" },
         { "type": "logo" }

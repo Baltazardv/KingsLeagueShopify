@@ -1,0 +1,583 @@
+{{ 'video-section.css' | asset_url | stylesheet_tag }}
+{{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* Kings League Header con Logo */
+  .kings-league-header-{{ section.id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .kings-league-header-{{ section.id }} .header-logo {
+    max-width: 150px;
+    max-height: 80px;
+    filter: drop-shadow(0 0 15px rgba(255, 107, 53, 0.6));
+    animation: logoGlow-{{ section.id }} 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes logoGlow-{{ section.id }} {
+    0% {
+      filter: drop-shadow(0 0 15px rgba(255, 107, 53, 0.6));
+    }
+    100% {
+      filter: drop-shadow(0 0 25px rgba(255, 165, 0, 0.8));
+    }
+  }
+
+  /* Kings League Video Player Styles */
+  .kings-league-video-container-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .kings-league-video-container-{{ section.id }} .video-wrapper {
+    position: relative;
+    width: 100%;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    
+    /* Sombreado Kings League luminoso */
+    box-shadow: 
+      0 0 30px rgba(255, 107, 53, 0.7),
+      0 0 60px rgba(255, 165, 0, 0.5),
+      0 0 90px rgba(255, 205, 60, 0.3);
+    
+    /* Animación del sombreado */
+    animation: glowingShadow-{{ section.id }} 3s ease-in-out infinite alternate;
+    
+    /* Borde sutil para mejor definición */
+    border: 2px solid rgba(255, 107, 53, 0.3);
+    
+    /* Transición suave para hover */
+    transition: all 0.3s ease;
+  }
+  
+  /* Hover effect para intensificar el glow */
+  .kings-league-video-container-{{ section.id }} .video-wrapper:hover {
+    box-shadow: 
+      0 0 40px rgba(255, 107, 53, 0.9),
+      0 0 80px rgba(255, 165, 0, 0.7),
+      0 0 120px rgba(255, 205, 60, 0.5);
+    
+    border-color: rgba(255, 107, 53, 0.6);
+    transform: translateY(-2px);
+  }
+  
+  /* Animación del sombreado luminoso */
+  @keyframes glowingShadow-{{ section.id }} {
+    0% {
+      box-shadow: 
+        0 0 25px rgba(255, 107, 53, 0.6),
+        0 0 50px rgba(255, 165, 0, 0.4),
+        0 0 75px rgba(255, 205, 60, 0.2);
+    }
+    100% {
+      box-shadow: 
+        0 0 35px rgba(255, 107, 53, 0.8),
+        0 0 70px rgba(255, 165, 0, 0.6),
+        0 0 105px rgba(255, 205, 60, 0.4);
+    }
+  }
+  
+  /* Borde animado luminoso adicional */
+  .kings-league-video-container-{{ section.id }} .glowing-border {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    border-radius: 20px;
+    background: linear-gradient(45deg, 
+      rgba(255, 107, 53, 0.8), 
+      rgba(255, 165, 0, 0.9), 
+      rgba(255, 205, 60, 0.7), 
+      rgba(255, 107, 53, 0.8)
+    );
+    background-size: 400% 400%;
+    animation: glowingBorderPulse-{{ section.id }} 4s ease-in-out infinite;
+    z-index: -1;
+    opacity: 0.7;
+    filter: blur(3px);
+  }
+
+  @keyframes glowingBorderPulse-{{ section.id }} {
+    0%, 100% {
+      background-position: 0% 50%;
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      background-position: 100% 50%;
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+  }
+
+  .kings-league-video-container-{{ section.id }} .video-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Responsive ajustments */
+  @media (max-width: 768px) {
+    .kings-league-header-{{ section.id }} {
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .kings-league-header-{{ section.id }} .header-logo {
+      max-width: 100px;
+      max-height: 60px;
+    }
+
+    .kings-league-video-container-{{ section.id }} {
+      padding: 15px;
+    }
+
+    .kings-league-video-container-{{ section.id }} .video-wrapper {
+      border-radius: 12px;
+      box-shadow: 
+        0 0 20px rgba(255, 107, 53, 0.6),
+        0 0 40px rgba(255, 165, 0, 0.4),
+        0 0 60px rgba(255, 205, 60, 0.2);
+    }
+
+    .kings-league-video-container-{{ section.id }} .video-wrapper:hover {
+      box-shadow: 
+        0 0 25px rgba(255, 107, 53, 0.8),
+        0 0 50px rgba(255, 165, 0, 0.6),
+        0 0 75px rgba(255, 205, 60, 0.4);
+    }
+
+    .kings-league-video-container-{{ section.id }} .glowing-border {
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border-radius: 16px;
+    }
+  }
+
+  /* Efecto especial al estar reproduciendo */
+  .kings-league-video-container-{{ section.id }} .video-wrapper.playing {
+    animation: playingGlow-{{ section.id }} 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes playingGlow-{{ section.id }} {
+    0% {
+      box-shadow: 
+        0 0 30px rgba(255, 107, 53, 0.8),
+        0 0 60px rgba(255, 165, 0, 0.6),
+        0 0 90px rgba(255, 205, 60, 0.4);
+    }
+    100% {
+      box-shadow: 
+        0 0 50px rgba(255, 107, 53, 1),
+        0 0 100px rgba(255, 165, 0, 0.8),
+        0 0 150px rgba(255, 205, 60, 0.6);
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign video_id = section.settings.video.id | default: section.settings.video_url.id
+  assign video_alt = section.settings.video.alt | default: section.settings.description
+  assign poster = section.settings.video.preview_image | default: section.settings.cover_image
+  assign logo_image = section.settings.logo_image
+  assign custom_video_url = section.settings.custom_video_url
+  
+  # Priorizar video personalizado
+  if custom_video_url != blank
+    assign final_video_url = custom_video_url
+    assign video_type = 'custom'
+  elsif section.settings.video != null
+    assign final_video_url = section.settings.video
+    assign video_type = 'shopify'
+  elsif section.settings.video_url != null
+    assign final_video_url = section.settings.video_url
+    assign video_type = 'external'
+  endif
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="video-section isolate{% unless section.settings.full_width %} page-width{% endunless %} section-{{ section.id }}-padding">
+    <div
+      {% if section.settings.full_width %}
+        class="page-width"
+      {% endif %}
+    >
+      <!-- Header con Logo y Título -->
+      <div class="kings-league-header-{{ section.id }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {%- if logo_image -%}
+          <img src="{{ logo_image | image_url: width: 300 }}" alt="Kings League Logo" class="header-logo">
+        {%- endif -%}
+        
+        {%- unless section.settings.heading == blank -%}
+          <h2 class="title inline-richtext {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+        {%- endunless -%}
+      </div>
+    </div>
+
+    {%- if final_video_url != blank -%}
+      <!-- Reproductor de video con efectos luminosos Kings League -->
+      <div class="kings-league-video-container-{{ section.id }}">
+        <div class="video-wrapper">
+          <!-- Borde animado luminoso adicional -->
+          <div class="glowing-border"></div>
+          
+          {%- if video_type == 'custom' -%}
+            <video
+              class="video-player"
+              {% if poster %}poster="{{ poster | image_url: width: 1200 }}"{% endif %}
+              {% if section.settings.enable_video_looping %}loop{% endif %}
+              playsinline
+              controls
+            >
+              <source src="{{ custom_video_url }}" type="video/mp4">
+              Tu navegador no soporta el elemento video.
+            </video>
+          {%- elsif video_type == 'shopify' -%}
+            {{ section.settings.video | video_tag: 
+              controls: true,
+              loop: section.settings.enable_video_looping,
+              class: 'video-player'
+            }}
+          {%- elsif video_type == 'external' -%}
+            <div
+              class="video-player-container deferred-media media"
+              style="padding-top: {{ 1 | divided_by: final_video_url.aspect_ratio | times: 100 }}%"
+            >
+              <button
+                id="Deferred-Media-{{ video_player_id }}"
+                class="deferred-media__poster media-{{ section.id }} media-16x9"
+                type="button"
+              >
+                {%- if poster != blank -%}
+                  <img
+                    src="{{ poster | image_url: width: 1200 }}"
+                    alt="{{ video_alt | escape }}"
+                    class="deferred-media__poster-image"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+                <span class="deferred-media__button">
+                  <svg class="icon icon-play" aria-hidden="true" focusable="false" viewBox="0 0 13 13">
+                    <path d="M5.424 3.139L10.701 6.32a.5.5 0 010 .86l-5.277 3.181A.5.5 0 015 10.701V3.299a.5.5 0 01.424-.16z" fill="currentColor"></path>
+                  </svg>
+                </span>
+              </button>
+              <template>
+                <iframe
+                  src="{{ final_video_url.url }}?enablejsapi=1"
+                  title="{{ video_alt | escape }}"
+                  class="js-youtube"
+                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                ></iframe>
+              </template>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+    {%- else -%}
+      <div class="video-placeholder" style="text-align: center; padding: 60px 20px; border: 2px dashed #ccc; border-radius: 12px; color: #666;">
+        <p>Configura tu video en las opciones de la sección</p>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Detectar si es dispositivo móvil
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // Agregar efecto especial cuando el video está reproduciéndose
+  const videoWrappers = document.querySelectorAll('.kings-league-video-container-{{ section.id }} .video-wrapper');
+  
+  videoWrappers.forEach(wrapper => {
+    const video = wrapper.querySelector('video');
+    if (video) {
+      // Estados del video
+      video.addEventListener('play', () => {
+        wrapper.classList.add('playing');
+      });
+      
+      video.addEventListener('pause', () => {
+        wrapper.classList.remove('playing');
+      });
+      
+      video.addEventListener('ended', () => {
+        wrapper.classList.remove('playing');
+      });
+
+      // Configuración específica para móviles
+      if (isMobile) {
+        // Prevenir comportamientos que causen reload
+        video.addEventListener('touchstart', function(e) {
+          e.stopPropagation();
+        });
+        
+        video.addEventListener('touchend', function(e) {
+          e.stopPropagation();
+        });
+        
+        // Configurar atributos específicos para móviles
+        video.setAttribute('webkit-playsinline', 'true');
+        video.setAttribute('playsinline', 'true');
+        
+        // Para iOS Safari - permitir fullscreen nativo
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+          video.setAttribute('allowsInlineMediaPlayback', 'true');
+          video.setAttribute('playsInline', 'true');
+          
+          // Prevenir el zoom doble-tap en iOS
+          video.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          });
+        }
+        
+        // Para Android
+        if (/Android/i.test(navigator.userAgent)) {
+          video.setAttribute('x-webkit-airplay', 'allow');
+        }
+      }
+      
+      // Event listeners para fullscreen (solo en desktop)
+      if (!isMobile) {
+        video.addEventListener('dblclick', function(e) {
+          e.preventDefault();
+          toggleFullscreen(video);
+        });
+      }
+    }
+  });
+
+  // Función para fullscreen (solo desktop)
+  function toggleFullscreen(element) {
+    if (isMobile) return; // No usar en móviles
+    
+    if (!document.fullscreenElement && 
+        !document.webkitFullscreenElement && 
+        !document.mozFullScreenElement && 
+        !document.msFullscreenElement) {
+      
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  }
+
+  // Prevenir zoom en iOS al hacer doble tap
+  if (isMobile && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    document.addEventListener('touchend', function(e) {
+      if (e.target.closest('.kings-league-video-container-{{ section.id }}')) {
+        e.preventDefault();
+      }
+    });
+    
+    // Prevenir el gesto de "pellizcar para hacer zoom"
+    document.addEventListener('gesturestart', function(e) {
+      if (e.target.closest('.kings-league-video-container-{{ section.id }}')) {
+        e.preventDefault();
+      }
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "🎥 Kings League Video",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Video",
+      "label": "Título"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Pequeño"
+        },
+        {
+          "value": "h1",
+          "label": "Medio"
+        },
+        {
+          "value": "h0",
+          "label": "Grande"
+        },
+        {
+          "value": "hxl",
+          "label": "Extra grande"
+        },
+        {
+          "value": "hxxl",
+          "label": "XX-Grande"
+        }
+      ],
+      "default": "h1",
+      "label": "Tamaño del título"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "Logo en el encabezado",
+      "info": "Logo que aparece en el encabezado junto al título"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "label": "Reproducir en bucle",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "🎬 Video personalizado (MP4)"
+    },
+    {
+      "type": "url",
+      "id": "custom_video_url",
+      "label": "URL del video MP4",
+      "info": "Sube tu video en Settings > Files y pega la URL aquí. Tendrá prioridad sobre otras opciones."
+    },
+    {
+      "type": "header",
+      "content": "📹 Video de Shopify"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "🌐 Video de YouTube/Vimeo"
+    },
+    {
+      "type": "paragraph",
+      "content": "Para mostrar videos de YouTube o Vimeo como alternativa."
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "accept": ["youtube", "vimeo"],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+      "label": "URL del video",
+      "info": "Solo se usará si no hay video personalizado configurado"
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "Imagen de portada",
+      "info": "Imagen que se muestra antes de reproducir"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Descripción del video",
+      "info": "Describe el video para accesibilidad"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Diseño de la sección"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Ancho completo",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "📏 Espaciado de la sección"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Espaciado superior",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Espaciado inferior",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "🎥 Kings League Video"
+    }
+  ]
+}
+{% endschema %}

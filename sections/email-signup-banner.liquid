@@ -1,409 +1,795 @@
-{{ 'section-image-banner.css' | asset_url | stylesheet_tag }}
-{{ 'component-newsletter.css' | asset_url | stylesheet_tag }}
-{{ 'newsletter-section.css' | asset_url | stylesheet_tag }}
-{{ 'section-email-signup-banner.css' | asset_url | stylesheet_tag }}
+{% comment %}
+  Sección de Reseñas de Clientes con diseño de mosaico (masonry) y formulario para usuarios.
+  - Utiliza bloques para que cada reseña sea un elemento editable.
+  - Permite a los usuarios agregar sus propias reseñas con foto y clasificación.
+  - El diseño se adapta automáticamente a diferentes tamaños de pantalla.
+{% endcomment %}
 
-{%- style -%}
-  #Banner-{{ section.id }}::after {
-    opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+<style>
+  .reviews-section-{{ section.id }} {
+    padding: {{ section.settings.padding_vertical }}px 0;
+    background-color: {{ section.settings.background_color }};
   }
 
-  {%- if section.settings.image_height == 'adapt-image' and section.settings.image != blank -%}
-    @media screen and (max-width: 749px) {
-      #Banner-{{ section.id }}:not(.banner--mobile-bottom) .banner__content::before {
-        padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;
-        content: '';
-        display: block;
-      }
-    }
+  .reviews-container-{{ section.id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
 
-    #Banner-{{ section.id }}::before,
-    #Banner-{{ section.id }} .banner__media::before {
-      padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;
-      content: '';
-      display: block;
-    }
-  {%- endif -%}
-{%- endstyle -%}
+  .reviews-title-{{ section.id }} {
+    color: {{ section.settings.title_color }};
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 3rem;
+  }
 
-<div
-  id="Banner-{{ section.id }}"
-  class="email-signup-banner banner banner--content-align-{{ section.settings.desktop_content_alignment }} banner--content-align-mobile-{{ section.settings.mobile_content_alignment }} banner--{{ section.settings.image_height }}{% if section.settings.image_height == 'adapt-image' and section.settings.image != blank %} banner--adapt{% endif %}{% if section.settings.show_text_below %} banner--mobile-bottom{%- endif -%}{% if section.settings.show_text_box == false %} banner--desktop-transparent{% endif %}"
->
-  {%- if section.settings.show_background_image -%}
-    <div class="banner__media{% if section.settings.image != blank %} media{% endif %}">
-      {%- if section.settings.image != blank -%}
-        <img
-          srcset="
-            {%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
-            {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
-            {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
-            {%- if section.settings.image.width >= 1780 -%}{{ section.settings.image | image_url: width: 1780 }} 1780w,{%- endif -%}
-            {%- if section.settings.image.width >= 2000 -%}{{ section.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}
-            {%- if section.settings.image.width >= 3000 -%}{{ section.settings.image | image_url: width: 3000 }} 3000w,{%- endif -%}
-            {%- if section.settings.image.width >= 3840 -%}{{ section.settings.image | image_url: width: 3840 }} 3840w,{%- endif -%}
-            {{ section.settings.image | image_url }} {{ section.settings.image.width }}w
-          "
-          sizes="100vw"
-          src="{{ section.settings.image | image_url: width: 1500 }}"
-          loading="lazy"
-          alt="{{ section.settings.image.alt | escape }}"
-          width="{{ section.settings.image.width }}"
-          height="{{ section.settings.image.width | divided_by: section.settings.image.aspect_ratio }}"
-        >
-      {%- else -%}
-        {{- 'email-signup-banner-background.svg' | inline_asset_content -}}
-        {{- 'email-signup-banner-background-mobile.svg' | inline_asset_content -}}
-      {%- endif -%}
-    </div>
-  {%- endif -%}
-  <div class="banner__content banner__content--{{ section.settings.desktop_content_position }} page-width">
-    <div class="email-signup-banner__box banner__box newsletter newsletter__wrapper isolate{% if section.settings.show_background_image == false %} email-signup-banner__box--no-image{% endif %} content-container color-{{ section.settings.color_scheme }} gradient content-container--full-width-mobile">
+  /* --- Estilos del formulario de reseñas --- */
+  .user-review-form-{{ section.id }} {
+    max-width: 600px;
+    margin: 0 auto 3rem auto;
+    background-color: {{ section.settings.card_background_color }};
+    border-radius: 0.75rem;
+    padding: 2rem;
+    border: 2px solid {{ section.settings.title_color }};
+  }
+
+  .form-title-{{ section.id }} {
+    color: {{ section.settings.title_color }};
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .form-group-{{ section.id }} {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label-{{ section.id }} {
+    display: block;
+    color: {{ section.settings.card_text_color }};
+    font-family: 'Matrice', sans-serif;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .form-input-{{ section.id }}, .form-textarea-{{ section.id }} {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #333;
+    border-radius: 0.5rem;
+    background-color: #2a2a2a;
+    color: {{ section.settings.card_text_color }};
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.9rem;
+  }
+
+  .form-input-{{ section.id }}:focus, .form-textarea-{{ section.id }}:focus {
+    outline: none;
+    border-color: {{ section.settings.title_color }};
+    box-shadow: 0 0 0 2px rgba(244, 175, 35, 0.2);
+  }
+
+  .form-textarea-{{ section.id }} {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .rating-input-{{ section.id }} {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .star-input-{{ section.id }} {
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .star-input-{{ section.id }}.active {
+    color: #f4af23;
+  }
+
+  .star-input-{{ section.id }}:hover {
+    color: #f4af23;
+  }
+
+  .file-input-wrapper-{{ section.id }} {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .file-input-{{ section.id }} {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .file-input-label-{{ section.id }} {
+    display: block;
+    padding: 0.75rem;
+    border: 2px dashed #666;
+    border-radius: 0.5rem;
+    text-align: center;
+    color: {{ section.settings.card_text_color }};
+    font-family: 'Archivo', sans-serif;
+    background-color: #2a2a2a;
+    transition: border-color 0.2s;
+  }
+
+  .file-input-label-{{ section.id }}:hover {
+    border-color: {{ section.settings.title_color }};
+  }
+
+  .image-preview-container-{{ section.id }} {
+    position: relative;
+    display: none;
+    margin-top: 1rem;
+  }
+
+  .image-preview-{{ section.id }} {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 0.5rem;
+    display: block;
+  }
+
+  .remove-image-btn-{{ section.id }} {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .remove-image-btn-{{ section.id }}:hover {
+    background-color: #cc0000;
+  }
+
+  .submit-btn-{{ section.id }} {
+    width: 100%;
+    padding: 1rem;
+    background-color: {{ section.settings.title_color }};
+    color: #000;
+    border: none;
+    border-radius: 0.5rem;
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .submit-btn-{{ section.id }}:hover {
+    opacity: 0.9;
+  }
+
+  .submit-btn-{{ section.id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* --- Estilos del grid de reseñas --- */
+  .reviews-grid-{{ section.id }} {
+    column-count: 4;
+    column-gap: 1rem;
+  }
+
+  .review-card-{{ section.id }} {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: {{ section.settings.card_background_color }};
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    color: {{ section.settings.card_text_color }};
+    break-inside: avoid;
+  }
+
+  .review-card-{{ section.id }}.user-review {
+    border: 2px solid {{ section.settings.title_color }};
+    position: relative;
+  }
+
+  .user-review-badge-{{ section.id }} {
+    position: absolute;
+    top: -10px;
+    right: 15px;
+    background-color: {{ section.settings.title_color }};
+    color: #000;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .review-card-image-{{ section.id }} {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .review-stars-{{ section.id }} {
+    display: flex;
+    gap: 0.25rem;
+    color: #f4af23;
+    margin-bottom: 0.75rem;
+  }
+
+  .review-stars-{{ section.id }} svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .review-author-{{ section.id }} {
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .review-author-{{ section.id }} .verified-badge {
+    color: #22c55e;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+  }
+
+  .review-text-{{ section.id }} {
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+
+  .review-date-{{ section.id }} {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 1rem;
+    font-style: italic;
+  }
+
+  /* --- Responsividad del grid --- */
+  @media (max-width: 990px) {
+    .reviews-grid-{{ section.id }} {
+      column-count: 3;
+    }
+  }
+  @media (max-width: 767px) {
+    .reviews-grid-{{ section.id }} {
+      column-count: 2;
+    }
+    .user-review-form-{{ section.id }} {
+      padding: 1.5rem;
+    }
+  }
+  @media (max-width: 480px) {
+    .reviews-grid-{{ section.id }} {
+      column-count: 1;
+    }
+    .user-review-form-{{ section.id }} {
+      padding: 1rem;
+    }
+  }
+</style>
+
+<div class="reviews-section-{{ section.id }}">
+  <div class="reviews-container-{{ section.id }}">
+    {%- if section.settings.title != blank -%}
+      <h2 class="reviews-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.show_user_form -%}
+      <!-- Formulario para que los usuarios dejen reseñas -->
+      <div class="user-review-form-{{ section.id }}">
+        <h3 class="form-title-{{ section.id }}">Deja tu reseña</h3>
+        <form id="userReviewForm-{{ section.id }}">
+          <div class="form-group-{{ section.id }}">
+            <label class="form-label-{{ section.id }}" for="userName-{{ section.id }}">Tu nombre *</label>
+            <input type="text" id="userName-{{ section.id }}" class="form-input-{{ section.id }}" required>
+          </div>
+
+          <div class="form-group-{{ section.id }}">
+            <label class="form-label-{{ section.id }}">Calificación *</label>
+            <div class="rating-input-{{ section.id }}">
+              <span class="star-input-{{ section.id }}" data-rating="1">★</span>
+              <span class="star-input-{{ section.id }}" data-rating="2">★</span>
+              <span class="star-input-{{ section.id }}" data-rating="3">★</span>
+              <span class="star-input-{{ section.id }}" data-rating="4">★</span>
+              <span class="star-input-{{ section.id }}" data-rating="5">★</span>
+            </div>
+            <input type="hidden" id="userRating-{{ section.id }}" value="5">
+          </div>
+
+          <div class="form-group-{{ section.id }}">
+            <label class="form-label-{{ section.id }}" for="userReview-{{ section.id }}">Tu reseña *</label>
+            <textarea id="userReview-{{ section.id }}" class="form-textarea-{{ section.id }}" placeholder="Comparte tu experiencia con el producto..." required></textarea>
+          </div>
+
+          <div class="form-group-{{ section.id }}">
+            <label class="form-label-{{ section.id }}">Foto del producto (opcional)</label>
+            <div class="file-input-wrapper-{{ section.id }}">
+              <input type="file" id="userImage-{{ section.id }}" class="file-input-{{ section.id }}" accept="image/*">
+              <label for="userImage-{{ section.id }}" class="file-input-label-{{ section.id }}">
+                📷 Haz clic para subir una foto
+              </label>
+            </div>
+            <div class="image-preview-container-{{ section.id }}" id="imagePreviewContainer-{{ section.id }}">
+              <img id="imagePreview-{{ section.id }}" class="image-preview-{{ section.id }}" alt="Vista previa">
+              <button type="button" class="remove-image-btn-{{ section.id }}" id="removeImageBtn-{{ section.id }}" title="Eliminar imagen">×</button>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn-{{ section.id }}">Publicar reseña</button>
+        </form>
+      </div>
+    {%- endif -%}
+
+    <div class="reviews-grid-{{ section.id }}" id="reviewsGrid-{{ section.id }}">
+      <!-- Reseñas predefinidas del admin -->
       {%- for block in section.blocks -%}
-        {%- case block.type -%}
-          {%- when 'heading' -%}
-            <h2 class="email-signup-banner__heading {{ block.settings.heading_size }}" {{ block.shopify_attributes }}>
-              {{ block.settings.heading | escape }}
-            </h2>
-          {%- when 'paragraph' -%}
-            <div class="newsletter__subheading rte {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
-              {{ block.settings.text }}
-            </div>
-          {%- when 'email_form' -%}
-            <div {{ block.shopify_attributes }}>
-              {% form 'customer', class: 'newsletter-form' %}
-                <input type="hidden" name="contact[tags]" value="newsletter">
-                <div class="newsletter-form__field-wrapper">
-                  <div class="field">
-                    <input
-                      id="NewsletterForm--{{ section.id }}"
-                      type="email"
-                      name="contact[email]"
-                      class="field__input"
-                      value="{{ form.email }}"
-                      aria-required="true"
-                      autocorrect="off"
-                      autocapitalize="off"
-                      autocomplete="email"
-                      {% if form.errors %}
-                        autofocus
-                        aria-invalid="true"
-                        aria-describedby="Newsletter-error--{{ section.id }}"
-                      {% elsif form.posted_successfully? %}
-                        aria-describedby="Newsletter-success--{{ section.id }}"
-                      {% endif %}
-                      placeholder="{{ 'newsletter.label' | t }}"
-                      required
-                    >
-                    <label class="field__label" for="NewsletterForm--{{ section.id }}">
-                      {{ 'newsletter.label' | t }}
-                    </label>
-                    <button
-                      type="submit"
-                      class="newsletter-form__button field__button"
-                      name="commit"
-                      id="Subscribe"
-                      aria-label="{{ 'newsletter.button_label' | t }}"
-                    >
-                      <span class="svg-wrapper">
-                        {{- 'icon-arrow.svg' | inline_asset_content -}}
-                      </span>
-                    </button>
-                  </div>
-                  {%- if form.errors -%}
-                    <small class="newsletter-form__message form__message" id="Newsletter-error--{{ section.id }}">
-                      <span class="svg-wrapper">
-                        {{- 'icon-error.svg' | inline_asset_content -}}
-                      </span>
-                      {{- form.errors.translated_fields.email | capitalize }}
-                      {{ form.errors.messages.email -}}
-                    </small>
-                  {%- endif -%}
-                </div>
-                {%- if form.posted_successfully? -%}
-                  <h3
-                    class="newsletter-form__message newsletter-form__message--success form__message"
-                    id="Newsletter-success--{{ section.id }}"
-                    tabindex="-1"
-                    autofocus
-                  >
-                    <span class="svg-wrapper">
-                      {{- 'icon-success.svg' | inline_asset_content -}}
-                    </span>
-                    {{- 'newsletter.success' | t }}
-                  </h3>
-                {%- endif -%}
-              {% endform %}
-            </div>
-        {%- endcase -%}
+        <div class="review-card-{{ section.id }}">
+          {%- if block.settings.image != blank -%}
+            <img
+              src="{{ block.settings.image | image_url: width: 500 }}"
+              alt="{{ block.settings.image.alt | default: 'Foto de cliente' | escape }}"
+              class="review-card-image-{{ section.id }}"
+              loading="lazy"
+            >
+          {%- endif -%}
+
+          <div class="review-stars-{{ section.id }}">
+            {%- for i in (1..block.settings.rating) -%}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.868 2.884c.321-.662 1.215-.662 1.536 0l1.83 3.75 4.14.602c.73.106 1.02.998.494 1.506l-2.996 2.92.707 4.124c.124.727-.638 1.28-1.296.942L12 14.934l-3.71 1.95c-.658.338-1.42-.215-1.296-.942l.707-4.124-2.996-2.92c-.527-.508-.236-1.4.494-1.506l4.14-.602 1.83-3.75z" clip-rule="evenodd" />
+              </svg>
+            {%- endfor -%}
+          </div>
+
+          <h3 class="review-author-{{ section.id }}">
+            {{ block.settings.author | escape }}
+            {%- if block.settings.is_verified -%}
+              <span class="verified-badge">✔ Verificado</span>
+            {%- endif -%}
+          </h3>
+
+          <div class="review-text-{{ section.id }}">
+            {{ block.settings.text }}
+          </div>
+        </div>
       {%- endfor -%}
+
+      <!-- Las reseñas de usuarios se cargarán aquí via JavaScript -->
     </div>
   </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const sectionId = '{{ section.id }}';
+  const form = document.getElementById(`userReviewForm-${sectionId}`);
+  const reviewsGrid = document.getElementById(`reviewsGrid-${sectionId}`);
+  const starInputs = document.querySelectorAll(`.star-input-${sectionId}`);
+  const ratingInput = document.getElementById(`userRating-${sectionId}`);
+  const imageInput = document.getElementById(`userImage-${sectionId}`);
+  const imagePreview = document.getElementById(`imagePreview-${sectionId}`);
+  const imagePreviewContainer = document.getElementById(`imagePreviewContainer-${sectionId}`);
+  const removeImageBtn = document.getElementById(`removeImageBtn-${sectionId}`);
+
+  // Configurar sistema de calificación con estrellas
+  starInputs.forEach(star => {
+    star.addEventListener('click', function() {
+      const rating = parseInt(this.dataset.rating);
+      ratingInput.value = rating;
+      
+      starInputs.forEach((s, index) => {
+        if (index < rating) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+    });
+
+    star.addEventListener('mouseover', function() {
+      const rating = parseInt(this.dataset.rating);
+      starInputs.forEach((s, index) => {
+        if (index < rating) {
+          s.style.color = '#f4af23';
+        } else {
+          s.style.color = '#666';
+        }
+      });
+    });
+  });
+
+  // Restaurar calificación al salir del hover
+  document.querySelector(`.rating-input-${sectionId}`).addEventListener('mouseleave', function() {
+    const currentRating = parseInt(ratingInput.value);
+    starInputs.forEach((s, index) => {
+      if (index < currentRating) {
+        s.style.color = '#f4af23';
+      } else {
+        s.style.color = '#666';
+      }
+    });
+  });
+
+  // Inicializar con 5 estrellas
+  starInputs.forEach((s, index) => {
+    if (index < 5) {
+      s.classList.add('active');
+    }
+  });
+
+  // Preview de imagen
+  if (imageInput) {
+    imageInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        // Verificar tamaño del archivo (máximo 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          alert('La imagen es muy grande. Por favor selecciona una imagen menor a 2MB.');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagePreview.src = e.target.result;
+          imagePreviewContainer.style.display = 'block';
+          
+          const label = document.querySelector(`.file-input-label-${sectionId}`);
+          label.textContent = '✓ Imagen seleccionada';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Eliminar imagen
+  if (removeImageBtn) {
+    removeImageBtn.addEventListener('click', function() {
+      imageInput.value = '';
+      imagePreview.src = '';
+      imagePreviewContainer.style.display = 'none';
+      
+      const label = document.querySelector(`.file-input-label-${sectionId}`);
+      label.textContent = '📷 Haz clic para subir una foto';
+    });
+  }
+
+  // Manejar envío del formulario
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const userName = document.getElementById(`userName-${sectionId}`).value.trim();
+      const userRating = parseInt(ratingInput.value);
+      const userReview = document.getElementById(`userReview-${sectionId}`).value.trim();
+      
+      if (!userName || !userReview) {
+        alert('Por favor completa todos los campos obligatorios.');
+        return;
+      }
+
+      // Crear objeto de reseña (sin imagen por ahora para evitar problemas)
+      const review = {
+        id: Date.now(),
+        author: userName,
+        rating: userRating,
+        text: userReview,
+        image: null, // Simplificamos eliminando la imagen por ahora
+        date: new Date().toLocaleDateString('es-ES'),
+        isUserReview: true
+      };
+
+      // Intentar manejar la imagen si existe
+      if (imagePreview.src && imagePreviewContainer.style.display !== 'none') {
+        try {
+          // Solo guardamos imágenes pequeñas para evitar problemas de localStorage
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          
+          img.onload = function() {
+            // Redimensionar imagen a máximo 300px de ancho
+            const maxWidth = 300;
+            const scale = Math.min(maxWidth / img.width, maxWidth / img.height);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            review.image = canvas.toDataURL('image/jpeg', 0.7); // Calidad reducida
+            
+            // Guardar y mostrar la reseña
+            saveUserReview(review);
+            displayUserReview(review);
+            
+            // Limpiar formulario
+            resetForm();
+            
+            alert('¡Gracias por tu reseña! Se ha publicado correctamente.');
+          };
+          
+          img.src = imagePreview.src;
+        } catch (error) {
+          console.warn('Error procesando imagen:', error);
+          // Publicar sin imagen si hay error
+          saveUserReview(review);
+          displayUserReview(review);
+          resetForm();
+          alert('¡Gracias por tu reseña! Se ha publicado correctamente (sin imagen debido a un error técnico).');
+        }
+      } else {
+        // Sin imagen
+        saveUserReview(review);
+        displayUserReview(review);
+        resetForm();
+        alert('¡Gracias por tu reseña! Se ha publicado correctamente.');
+      }
+    });
+  }
+
+  function resetForm() {
+    form.reset();
+    imagePreviewContainer.style.display = 'none';
+    imagePreview.src = '';
+    document.querySelector(`.file-input-label-${sectionId}`).textContent = '📷 Haz clic para subir una foto';
+    
+    // Resetear estrellas a 5
+    ratingInput.value = 5;
+    starInputs.forEach((s, index) => {
+      if (index < 5) {
+        s.classList.add('active');
+        s.style.color = '#f4af23';
+      } else {
+        s.classList.remove('active');
+        s.style.color = '#666';
+      }
+    });
+  }
+
+  // Funciones para manejar almacenamiento global simulado
+  function saveUserReview(review) {
+    // Usar una clave global para que sea visible en toda la tienda
+    const globalKey = `shopify_user_reviews_global`;
+    let allReviews = JSON.parse(localStorage.getItem(globalKey) || '[]');
+    
+    // Agregar la sección ID para filtrar después
+    review.sectionId = sectionId;
+    allReviews.unshift(review); // Agregar al inicio
+    
+    // Limitar a máximo 100 reseñas para evitar problemas de almacenamiento
+    if (allReviews.length > 100) {
+      allReviews = allReviews.slice(0, 100);
+    }
+    
+    try {
+      localStorage.setItem(globalKey, JSON.stringify(allReviews));
+    } catch (error) {
+      console.error('Error guardando reseña:', error);
+      alert('Error al guardar la reseña. Por favor intenta de nuevo.');
+    }
+  }
+
+  function getUserReviews() {
+    const globalKey = `shopify_user_reviews_global`;
+    const allReviews = JSON.parse(localStorage.getItem(globalKey) || '[]');
+    // Filtrar solo las reseñas de esta sección
+    return allReviews.filter(review => review.sectionId === sectionId);
+  }
+
+  function displayUserReview(review) {
+    const reviewCard = createReviewCard(review);
+    reviewsGrid.insertAdjacentHTML('afterbegin', reviewCard);
+  }
+
+  function createReviewCard(review) {
+    const starsHtml = Array(review.rating).fill().map(() => 
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10.868 2.884c.321-.662 1.215-.662 1.536 0l1.83 3.75 4.14.602c.73.106 1.02.998.494 1.506l-2.996 2.92.707 4.124c.124.727-.638 1.28-1.296.942L12 14.934l-3.71 1.95c-.658.338-1.42-.215-1.296-.942l.707-4.124-2.996-2.92c-.527-.508-.236-1.4.494-1.506l4.14-.602 1.83-3.75z" clip-rule="evenodd" />
+      </svg>`
+    ).join('');
+
+    const imageHtml = review.image ? 
+      `<img src="${review.image}" alt="Foto del cliente" class="review-card-image-${sectionId}" loading="lazy">` : '';
+
+    return `
+      <div class="review-card-${sectionId} user-review">
+        <div class="user-review-badge-${sectionId}">Nueva</div>
+        ${imageHtml}
+        <div class="review-stars-${sectionId}">
+          ${starsHtml}
+        </div>
+        <h3 class="review-author-${sectionId}">
+          ${review.author}
+          <span class="verified-badge">✔ Cliente</span>
+        </h3>
+        <div class="review-text-${sectionId}">
+          <p>${review.text}</p>
+        </div>
+        <div class="review-date-${sectionId}">
+          Publicado el ${review.date}
+        </div>
+      </div>
+    `;
+  }
+
+  // Cargar reseñas de usuarios al inicializar
+  function loadUserReviews() {
+    const userReviews = getUserReviews();
+    userReviews.forEach(review => {
+      displayUserReview(review);
+    });
+  }
+
+  // Cargar reseñas existentes
+  loadUserReviews();
+});
+</script>
+
 {% schema %}
 {
-  "name": "t:sections.email-signup-banner.name",
-  "tag": "section",
-  "class": "section",
-  "enabled_on": {
-    "templates": ["password"]
-  },
+  "name": "Reseñas de Clientes",
   "settings": [
     {
-      "type": "paragraph",
-      "content": "t:sections.email-signup-banner.settings.paragraph.content"
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "LO QUE DICEN NUESTROS CLIENTES"
     },
     {
       "type": "checkbox",
-      "id": "show_background_image",
-      "label": "t:sections.email-signup-banner.settings.show_background_image.label",
+      "id": "show_user_form",
+      "label": "Mostrar formulario para reseñas de usuarios",
       "default": true
-    },    
+    },
     {
-      "type": "image_picker",
-      "id": "image",
-      "label": "t:sections.email-signup-banner.settings.image.label"
+      "type": "header",
+      "content": "Estilos"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo de la Sección",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del Título",
+      "default": "#f4af23"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Fondo de las Tarjetas",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Color del Texto de las Tarjetas",
+      "default": "#FFFFFF"
     },
     {
       "type": "range",
-      "id": "image_overlay_opacity",
-      "min": 0,
-      "max": 100,
-      "step": 10,
-      "unit": "%",
-      "label": "t:sections.email-signup-banner.settings.image_overlay_opacity.label",
-      "default": 0
-    },
-    {
-      "type": "select",
-      "id": "image_height",
-      "options": [
-        {
-          "value": "adapt-image",
-          "label": "t:sections.email-signup-banner.settings.image_height.options__1.label"
-        },
-        {
-          "value": "small",
-          "label": "t:sections.email-signup-banner.settings.image_height.options__2.label"
-        },
-        {
-          "value": "medium",
-          "label": "t:sections.email-signup-banner.settings.image_height.options__3.label"
-        },
-        {
-          "value": "large",
-          "label": "t:sections.email-signup-banner.settings.image_height.options__4.label"
-        }
-      ],
-      "default": "medium",
-      "label": "t:sections.email-signup-banner.settings.image_height.label"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.email-signup-banner.settings.content_header.content"
-    },    
-    {
-      "type": "select",
-      "id": "desktop_content_position",
-      "options": [
-        {
-          "value": "top-left",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__1.label"
-        },
-        {
-          "value": "top-center",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__2.label"
-        },
-        {
-          "value": "top-right",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__3.label"
-        },
-        {
-          "value": "middle-left",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__4.label"
-        },
-        {
-          "value": "middle-center",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__5.label"
-        },
-        {
-          "value": "middle-right",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__6.label"
-        },
-        {
-          "value": "bottom-left",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__7.label"
-        },
-        {
-          "value": "bottom-center",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__8.label"
-        },
-        {
-          "value": "bottom-right",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__9.label"
-        }
-      ],
-      "default": "middle-center",
-      "label": "t:sections.email-signup-banner.settings.desktop_content_position.label"
-    },
-    {
-      "type": "select",
-      "id": "desktop_content_alignment",
-      "options": [
-        {
-          "value": "left",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_alignment.options__1.label"
-        },
-        {
-          "value": "center",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_alignment.options__2.label"
-        },
-        {
-          "value": "right",
-          "label": "t:sections.email-signup-banner.settings.desktop_content_alignment.options__3.label"
-        }
-      ],
-      "default": "center",
-      "label": "t:sections.email-signup-banner.settings.desktop_content_alignment.label"
-    },    
-    {
-      "type": "checkbox",
-      "id": "show_text_box",
-      "default": true,
-      "label": "t:sections.email-signup-banner.settings.show_text_box.label"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:sections.all.colors.label",
-      "info": "t:sections.email-signup-banner.settings.color_scheme.info",
-      "default": "scheme-1"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.email-signup-banner.settings.header.content"
-    },
-    {
-      "type": "select",
-      "id": "mobile_content_alignment",
-      "options": [
-        {
-          "value": "left",
-          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__1.label"
-        },
-        {
-          "value": "center",
-          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__2.label"
-        },
-        {
-          "value": "right",
-          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__3.label"
-        }
-      ],
-      "default": "center",
-      "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.label"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_text_below",
-      "default": true,
-      "label": "t:sections.email-signup-banner.settings.show_text_below.label"
+      "id": "padding_vertical",
+      "min": 20, "max": 120, "step": 4, "unit": "px",
+      "label": "Espaciado vertical",
+      "default": 80
     }
   ],
   "blocks": [
     {
-      "type": "heading",
-      "name": "t:sections.email-signup-banner.blocks.heading.name",
-      "limit": 1,
+      "type": "review",
+      "name": "Reseña",
       "settings": [
         {
-          "type": "text",
-          "id": "heading",
-          "default": "t:sections.email-signup-banner.blocks.heading.settings.heading.default",
-          "label": "t:sections.email-signup-banner.blocks.heading.settings.heading.label"
+          "type": "image_picker",
+          "id": "image",
+          "label": "Foto del Cliente"
         },
         {
-          "type": "select",
-          "id": "heading_size",
-          "options": [
-            {
-              "value": "h2",
-              "label": "t:sections.all.heading_size.options__1.label"
-            },
-            {
-              "value": "h1",
-              "label": "t:sections.all.heading_size.options__2.label"
-            },
-            {
-              "value": "h0",
-              "label": "t:sections.all.heading_size.options__3.label"
-            },
-            {
-              "value": "hxl",
-              "label": "t:sections.all.heading_size.options__4.label"
-            },
-            {
-              "value": "hxxl",
-              "label": "t:sections.all.heading_size.options__5.label"
-            }
-          ],
-          "default": "h1",
-          "label": "t:sections.all.heading_size.label"
-        }
-      ]
-    },
-    {
-      "type": "paragraph",
-      "name": "t:sections.email-signup-banner.blocks.paragraph.name",
-      "limit": 1,
-      "settings": [
+          "type": "text",
+          "id": "author",
+          "label": "Nombre del Cliente",
+          "default": "Nombre Apellido"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_verified",
+          "label": "Cliente Verificado",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Calificación (Estrellas)",
+          "default": 5
+        },
         {
           "type": "richtext",
           "id": "text",
-          "default": "t:sections.email-signup-banner.blocks.paragraph.settings.paragraph.default",
-          "label": "t:sections.email-signup-banner.blocks.paragraph.settings.paragraph.label"
-        },
-        {
-          "type": "select",
-          "id": "text_style",
-          "options": [
-            {
-              "value": "body",
-              "label": "t:sections.email-signup-banner.blocks.paragraph.settings.text_style.options__1.label"
-            },
-            {
-              "value": "subtitle",
-              "label": "t:sections.email-signup-banner.blocks.paragraph.settings.text_style.options__2.label"
-            }
-          ],
-          "default": "body",
-          "label": "t:sections.email-signup-banner.blocks.paragraph.settings.text_style.label"
+          "label": "Texto de la Reseña",
+          "default": "<p>Escribe aquí la reseña del cliente. ¡Un texto breve y directo funciona mejor!</p>"
         }
       ]
-    },
-    {
-      "type": "email_form",
-      "name": "t:sections.email-signup-banner.blocks.email_form.name",
-      "limit": 1
     }
   ],
   "presets": [
     {
-      "name": "t:sections.email-signup-banner.presets.name",
+      "name": "Reseñas de Clientes",
       "blocks": [
-        {
-          "type": "heading"
-        },
-        {
-          "type": "paragraph"
-        },
-        {
-          "type": "email_form"
-        }
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
       ]
     }
   ]
 }
 {% endschema %}
+
+{% comment %}
+NOTA IMPORTANTE PARA PRODUCCIÓN:
+=================================
+
+Las reseñas de usuarios se almacenan actualmente en localStorage del navegador,
+lo que tiene las siguientes limitaciones:
+
+LIMITACIONES:
+- Las reseñas son visibles solo en el navegador donde se crearon
+- Se pierden si el usuario borra los datos del navegador
+- No hay moderación de contenido
+- No hay respaldo en servidor
+
+PARA UN ENTORNO DE PRODUCCIÓN REAL, considere:
+
+1. SHOPIFY METAFIELDS:
+   - Use la Storefront API para guardar reseñas en metafields
+   - Permite moderación y persistencia real
+
+2. APPS DE TERCEROS:
+   - Judge.me, Yotpo, Stamped.io
+   - Ofrecen funcionalidades completas de reseñas
+
+3. BASE DE DATOS EXTERNA:
+   - Firebase, Supabase, etc.
+   - Requiere configuración adicional
+
+4. SHOPIFY FUNCTIONS:
+   - Para tiendas Shopify Plus
+   - Permite lógica personalizada en el backend
+
+Este código es ideal para demostraciones y prototipos.
+Para producción, implemente una solución de backend real.
+{% endcomment %}

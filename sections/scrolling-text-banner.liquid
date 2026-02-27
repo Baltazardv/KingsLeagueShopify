@@ -1,153 +1,104 @@
 {% comment %}
-  Sección para un banner de texto deslizante (ticker/marquesina).
-  Permite personalizar el texto, el logo, los colores y la velocidad.
+  Sección para una barra de beneficios deslizante.
+  - Utiliza bloques para que cada beneficio sea editable.
+  - El carrusel se duplica para un efecto de bucle perfecto.
 {% endcomment %}
 
 <style>
-  .scrolling-banner-section-{{ section.id }} {
+  .features-bar-section-{{ section.id }} {
     --animation-speed: {{ section.settings.speed }}s;
     background-color: {{ section.settings.background_color }};
-    padding: 0.75rem 0;
-    border-top: 2px solid {{ section.settings.border_color }};
-    border-bottom: 2px solid {{ section.settings.border_color }};
-    overflow: hidden; /* Clave para el efecto */
+    /* --- CAMBIO: Más espaciado vertical --- */
+    padding: 1rem 0;
+    overflow: hidden;
+    position: relative;
   }
 
-  .scrolling-banner-track-{{ section.id }} {
+  .features-bar-track-wrapper-{{ section.id }} {
     display: flex;
-    white-space: nowrap; /* Evita que el texto se parta en varias líneas */
-    animation: scroll-left var(--animation-speed) linear infinite;
+    width: fit-content;
+    animation: scroll-left-features-{{ section.id }} var(--animation-speed) linear infinite;
   }
 
-  .scrolling-banner-section-{{ section.id }}:hover .scrolling-banner-track-{{ section.id }} {
-    animation-play-state: paused; /* Pausa la animación al pasar el mouse por encima */
+  .features-bar-section-{{ section.id }}:hover .features-bar-track-wrapper-{{ section.id }} {
+    animation-play-state: paused;
   }
 
-  .scrolling-banner-item-{{ section.id }} {
+  .features-bar-track-{{ section.id }} {
     display: flex;
     align-items: center;
-    font-family: 'Termina Test', sans-serif; /* Usando una de tus fuentes personalizadas */
+  }
+
+  .feature-item-{{ section.id }} {
+    padding: 0 1.5rem;
+    white-space: nowrap;
+    font-family: 'Matrice', sans-serif;
     font-weight: 900;
+    /* --- CAMBIO: Letras más grandes y espaciadas --- */
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    font-size: 1.75rem;
-    color: {{ section.settings.text_color_accent }};
-    padding: 0 1.5rem; /* Espacio entre elementos */
+    color: {{ section.settings.text_color }};
   }
 
-  .scrolling-banner-item-{{ section.id }} img {
-    height: 1.25rem; /* Altura del logo pequeño */
-    width: auto;
-    margin-right: 0.75rem;
-    filter: brightness(0) invert(1); /* Hace el logo blanco si es negro */
+  /* El separador entre los items */
+  .feature-item-{{ section.id }}:not(:last-child)::after {
+    content: '|';
+    margin-left: 3rem;
+    opacity: 0.5;
   }
 
-  .scrolling-banner-item-{{ section.id }} .accent-text {
-    color: {{ section.settings.text_color_main }};
-    margin-left: 0.75rem;
-  }
-
-  @keyframes scroll-left {
+  @keyframes scroll-left-features-{{ section.id }} {
     from {
       transform: translateX(0);
     }
     to {
-      transform: translateX(-50%); /* Se detiene a la mitad para un bucle perfecto */
+      transform: translateX(-50%);
     }
   }
 
   @media (max-width: 768px) {
-    .scrolling-banner-item-{{ section.id }} {
-      font-size: 1.25rem;
-      padding: 0 1rem;
-    }
-    .scrolling-banner-item-{{ section.id }} img {
-      height: 1rem;
+    .feature-item-{{ section.id }} {
+      font-size: 1rem; /* Ajuste para móviles */
     }
   }
 </style>
 
-<div class="scrolling-banner-section-{{ section.id }}">
-  <a
-    href="{{ section.settings.link | default: '#' }}"
-    aria-label="{{ section.settings.text_main | default: 'Banner' }}"
-  >
-    <div class="scrolling-banner-track-{{ section.id }}">
-      {%- for i in (1..20) -%}
-        <div class="scrolling-banner-item-{{ section.id }}">
-          {%- if section.settings.logo != blank -%}
-            <img
-              src="{{ section.settings.logo | image_url: width: 150 }}"
-              alt="{{ section.settings.logo.alt | default: 'Logo' }}"
-              width="{{ section.settings.logo.width }}"
-              height="{{ section.settings.logo.height }}"
-              loading="lazy"
-            >
-          {%- endif -%}
-          {{ section.settings.text_accent }}
-          <span class="accent-text">{{ section.settings.text_main }}</span>
+<div class="features-bar-section-{{ section.id }}">
+  <div class="features-bar-track-wrapper-{{ section.id }}">
+    {%- comment %} Se renderiza el carrusel dos veces para el bucle infinito {%- endcomment %}
+    <div class="features-bar-track-{{ section.id }}">
+      {%- for block in section.blocks -%}
+        <div class="feature-item-{{ section.id }}">
+          {{ block.settings.text | escape }}
         </div>
       {%- endfor -%}
     </div>
-  </a>
+    <div class="features-bar-track-{{ section.id }}" aria-hidden="true">
+      {%- for block in section.blocks -%}
+        <div class="feature-item-{{ section.id }}">
+          {{ block.settings.text | escape }}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
 </div>
 
 {% schema %}
 {
-  "name": "Banner Deslizante",
+  "name": "Barra de Beneficios",
   "settings": [
-    {
-      "type": "header",
-      "content": "Contenido del Banner"
-    },
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo pequeño (opcional)"
-    },
-    {
-      "type": "text",
-      "id": "text_accent",
-      "label": "Texto de Acento (antes del principal)",
-      "default": "Openbank"
-    },
-    {
-      "type": "text",
-      "id": "text_main",
-      "label": "Texto Principal",
-      "default": "Kings League"
-    },
-    {
-      "type": "url",
-      "id": "link",
-      "label": "Enlace (toda la barra será un link)"
-    },
-    {
-      "type": "header",
-      "content": "Estilos y Animación"
-    },
     {
       "type": "color",
       "id": "background_color",
       "label": "Color de Fondo",
-      "default": "#000000"
+      "default": "#2A3C4F"
     },
     {
       "type": "color",
-      "id": "border_color",
-      "label": "Color de los Bordes",
-      "default": "#f4af23"
-    },
-    {
-      "type": "color",
-      "id": "text_color_accent",
-      "label": "Color del Texto de Acento",
+      "id": "text_color",
+      "label": "Color del Texto",
       "default": "#FFFFFF"
-    },
-    {
-      "type": "color",
-      "id": "text_color_main",
-      "label": "Color del Texto Principal",
-      "default": "#f4af23"
     },
     {
       "type": "range",
@@ -158,16 +109,32 @@
       "unit": "s",
       "label": "Velocidad de Deslizamiento",
       "info": "Un número más alto significa una animación más lenta.",
-      "default": 40
+      "default": 30
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Beneficio",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto del Beneficio",
+          "default": "Beneficio"
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Banner Deslizante"
+      "name": "Barra de Beneficios",
+      "blocks": [
+        { "type": "feature", "settings": { "text": "Hasta 3 MSI" } },
+        { "type": "feature", "settings": { "text": "Garantía 2 Años" } },
+        { "type": "feature", "settings": { "text": "Envíos Rápidos" } }
+      ]
     }
   ]
 }
 {% endschema %}
-``` Cambié `"name": "Banner con Texto Deslizante"` por `"name": "Banner Deslizante"`.
-
-Con este cambio, el archivo debería guardarse sin ningún problema. ¡Pruéba

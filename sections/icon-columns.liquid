@@ -1,152 +1,202 @@
 {% comment %}
-  Sección de columnas con iconos y texto.
-  - Muestra hasta 4 columnas en escritorio.
-  - Se apilan en 2x2 en tabletas y 1 columna en móviles.
-  - Cada columna es un bloque editable.
+  Sección de Hero con video de fondo, títulos y un botón.
+  Todos los elementos son configurables desde el editor de temas de Shopify.
 {% endcomment %}
 
+{%- liquid
+  assign video_url = section.settings.video_url
+  assign fallback_image = section.settings.fallback_image
+-%}
+
 <style>
-  .icon-columns-section-{{ section.id }} {
-    padding: {{ section.settings.padding_vertical }}px 0;
-    background-color: {{ section.settings.background_color }};
-    color: {{ section.settings.text_color }};
-  }
-
-  .icon-columns-grid-{{ section.id }} {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .icon-column-{{ section.id }} {
+  #hero-video-section-{{ section.id }} {
+    position: relative;
+    height: 100vh;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
     text-align: center;
+    overflow: hidden;
   }
-
-  .icon-column-{{ section.id }} svg {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto 1rem auto;
-    color: {{ section.settings.icon_color }};
+  #hero-video-background-{{ section.id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    object-fit: cover;
   }
-
-  .icon-column-title-{{ section.id }} {
-    font-family: 'Matrice', sans-serif;
+  .hero-content-{{ section.id }} {
+    position: relative;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(5px);
+  }
+  .hero-logo-{{ section.id }} {
+    max-height: {{ section.settings.logo_height }}px;
+    margin: 0 auto 1rem;
+  }
+  .hero-title-{{ section.id }} {
+    font-family: 'Termina Test', sans-serif; /* Asegúrate de que esta fuente esté cargada */
     font-weight: 900;
+    font-size: clamp(2.5rem, 8vw, 6rem);
     text-transform: uppercase;
-    font-size: 1.1rem;
     margin-bottom: 0.5rem;
   }
-
-  .icon-column-text-{{ section.id }} {
-    font-family: 'Archivo', sans-serif;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    opacity: 0.7;
+  .hero-subtitle-{{ section.id }} {
+    font-family: 'Matrice', sans-serif; /* Asegúrate de que esta fuente esté cargada */
+    font-weight: 900;
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    background: linear-gradient(90deg, #FFD700, #F59E0B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
   }
-
-  /* --- Media Queries para Responsividad --- */
-  @media (max-width: 990px) {
-    .icon-columns-grid-{{ section.id }} {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2.5rem 1.5rem;
-    }
+  .hero-button-{{ section.id }} {
+    background: linear-gradient(90deg, #F59E0B, #D97706);
+    color: white;
+    font-family: 'Matrice', sans-serif;
+    font-weight: 900;
+    padding: 0.75rem 2.5rem;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
   }
-
-  @media (max-width: 767px) {
-    .icon-columns-grid-{{ section.id }} {
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
-    }
+  .hero-button-{{ section.id }}:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
   }
 </style>
 
-<div class="icon-columns-section-{{ section.id }}">
-  <div class="icon-columns-grid-{{ section.id }}">
-    {%- for block in section.blocks -%}
-      <div class="icon-column-{{ section.id }}">
-        {%- if block.settings.icon != blank -%}
-          {{ block.settings.icon }}
-        {%- endif -%}
-        {%- if block.settings.title != blank -%}
-          <h3 class="icon-column-title-{{ section.id }}">{{ block.settings.title | escape }}</h3>
-        {%- endif -%}
-        {%- if block.settings.text != blank -%}
-          <p class="icon-column-text-{{ section.id }}">{{ block.settings.text | escape }}</p>
-        {%- endif -%}
-      </div>
-    {%- endfor -%}
+<div id="hero-video-section-{{ section.id }}">
+  {% if video_url != blank %}
+    <video
+      id="hero-video-background-{{ section.id }}"
+      autoplay
+      muted
+      loop
+      playsinline
+      {% if fallback_image != blank %}
+        poster="{{ fallback_image | image_url }}"
+      {% endif %}
+    >
+      <source src="{{ video_url }}" type="video/mp4">
+    </video>
+  {% elsif fallback_image != blank %}
+    <img
+      id="hero-video-background-{{ section.id }}"
+      src="{{ fallback_image | image_url: width: 1920 }}"
+      alt="{{ fallback_image.alt | default: 'Background image' }}"
+      loading="lazy"
+      width="1920"
+      height="1080"
+    >
+  {% else %}
+    <div id="hero-video-background-{{ section.id }}" style="background-color: #000;"></div>
+  {% endif %}
+
+  <div class="hero-content-{{ section.id }}">
+    {% if section.settings.logo != blank %}
+      <img
+        src="{{ section.settings.logo | image_url: width: 400 }}"
+        alt="{{ section.settings.logo.alt | default: 'Logo' }}"
+        class="hero-logo-{{ section.id }}"
+        width="{{ section.settings.logo_height | times: section.settings.logo.aspect_ratio | round }}"
+        height="{{ section.settings.logo_height }}"
+      >
+    {% endif %}
+
+    {% if section.settings.title != blank %}
+      <h1 class="hero-title-{{ section.id }}">{{ section.settings.title | escape }}</h1>
+    {% endif %}
+
+    {% if section.settings.subtitle != blank %}
+      <h2 class="hero-subtitle-{{ section.id }}">{{ section.settings.subtitle | escape }}</h2>
+    {% endif %}
+
+    {% if section.settings.button_text != blank and section.settings.button_link != blank %}
+      <a href="{{ section.settings.button_link }}" class="hero-button-{{ section.id }}">
+        {{ section.settings.button_text | escape }}
+      </a>
+    {% endif %}
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Columnas con Iconos",
-  "max_blocks": 4,
+  "name": "Hero con Video",
   "settings": [
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "Color de Fondo",
-      "default": "#1c1c1c"
+      "type": "header",
+      "content": "Contenido de Video e Imagen"
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "Color del Texto",
-      "default": "#ffffff"
+      "type": "url",
+      "id": "video_url",
+      "label": "URL del Video (MP4)",
+      "info": "Sube tu video a 'Contenido > Archivos' y pega el enlace aquí."
     },
     {
-      "type": "color",
-      "id": "icon_color",
-      "label": "Color de los Iconos",
-      "default": "#ffffff"
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Imagen de Respaldo",
+      "info": "Se muestra si el video no carga o en móviles. Sube una imagen del primer fotograma del video."
+    },
+    {
+      "type": "header",
+      "content": "Contenido de Texto y Botón"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
     },
     {
       "type": "range",
-      "id": "padding_vertical",
-      "min": 20, "max": 120, "step": 4, "unit": "px",
-      "label": "Espaciado vertical",
-      "default": 60
-    }
-  ],
-  "blocks": [
+      "id": "logo_height",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura del Logo",
+      "default": 120
+    },
     {
-      "type": "column",
-      "name": "Columna",
-      "settings": [
-        {
-          "type": "html",
-          "id": "icon",
-          "label": "Icono (SVG)",
-          "info": "Pega tu código SVG aquí. Busca iconos en sitios como heroicons.com"
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Título",
-          "default": "Título de la Columna"
-        },
-        {
-          "type": "text",
-          "id": "text",
-          "label": "Texto",
-          "default": "Describe brevemente el beneficio o la característica aquí."
-        }
-      ]
+      "type": "text",
+      "id": "title",
+      "label": "Título Principal",
+      "default": "EL RELOJ DE LA LIGA"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "LA PRECISIÓN DE LOS REYES"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del Botón",
+      "default": "HAZLO TUYO"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del Botón"
     }
   ],
   "presets": [
     {
-      "name": "Columnas con Iconos",
-      "blocks": [
-        { "type": "column", "settings": { "title": "Envío Internacionales" } },
-        { "type": "column", "settings": { "title": "Producto Oficial" } },
-        { "type": "column", "settings": { "title": "Pago Seguro" } },
-        { "type": "column", "settings": { "title": "Atención al Cliente" } }
-      ]
+      "name": "Hero con Video"
     }
   ]
 }

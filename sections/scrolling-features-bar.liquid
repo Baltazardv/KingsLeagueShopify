@@ -1,138 +1,476 @@
-{% comment %}
-  Sección para una barra de beneficios deslizante.
-  - Utiliza bloques para que cada beneficio sea editable.
-  - El carrusel se duplica para un efecto de bucle perfecto.
-{% endcomment %}
+{{ 'section-rich-text.css' | asset_url | stylesheet_tag }}
 
-<style>
-  .features-bar-section-{{ section.id }} {
-    --animation-speed: {{ section.settings.speed }}s;
-    background-color: {{ section.settings.background_color }};
-    /* --- CAMBIO: Más espaciado vertical --- */
-    padding: 1rem 0;
-    overflow: hidden;
-    position: relative;
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
   }
 
-  .features-bar-track-wrapper-{{ section.id }} {
-    display: flex;
-    width: fit-content;
-    animation: scroll-left-features-{{ section.id }} var(--animation-speed) linear infinite;
-  }
-
-  .features-bar-section-{{ section.id }}:hover .features-bar-track-wrapper-{{ section.id }} {
-    animation-play-state: paused;
-  }
-
-  .features-bar-track-{{ section.id }} {
-    display: flex;
-    align-items: center;
-  }
-
-  .feature-item-{{ section.id }} {
-    padding: 0 1.5rem;
-    white-space: nowrap;
-    font-family: 'Matrice', sans-serif;
-    font-weight: 900;
-    /* --- CAMBIO: Letras más grandes y espaciadas --- */
-    font-size: 1.2rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: {{ section.settings.text_color }};
-  }
-
-  /* El separador entre los items */
-  .feature-item-{{ section.id }}:not(:last-child)::after {
-    content: '|';
-    margin-left: 3rem;
-    opacity: 0.5;
-  }
-
-  @keyframes scroll-left-features-{{ section.id }} {
-    from {
-      transform: translateX(0);
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
     }
-    to {
-      transform: translateX(-50%);
+    .rich-text__with-background-image {
+      background-position: {{ section.settings.background_position_desktop }};
     }
   }
 
-  @media (max-width: 768px) {
-    .feature-item-{{ section.id }} {
-      font-size: 1rem; /* Ajuste para móviles */
-    }
+  .rich-text__with-background-image {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: {{ section.settings.background_position_mobile }};
+    background-attachment: {{ section.settings.background_attachment }};
   }
-</style>
+{%- endstyle -%}
 
-<div class="features-bar-section-{{ section.id }}">
-  <div class="features-bar-track-wrapper-{{ section.id }}">
-    {%- comment %} Se renderiza el carrusel dos veces para el bucle infinito {%- endcomment %}
-    <div class="features-bar-track-{{ section.id }}">
-      {%- for block in section.blocks -%}
-        <div class="feature-item-{{ section.id }}">
-          {{ block.settings.text | escape }}
-        </div>
-      {%- endfor -%}
-    </div>
-    <div class="features-bar-track-{{ section.id }}" aria-hidden="true">
-      {%- for block in section.blocks -%}
-        <div class="feature-item-{{ section.id }}">
-          {{ block.settings.text | escape }}
-        </div>
-      {%- endfor -%}
+<div class="isolate{% unless section.settings.full_width %} page-width{% endunless %}">
+  <div class="rich-text content-container color-{{ section.settings.color_scheme }} gradient{% if section.settings.full_width %} rich-text--full-width content-container--full-width{% endif %} section-{{ section.id }}-padding {% if section.settings.background_image != blank %}rich-text__with-background-image{% endif %}"
+    {% if section.settings.background_image != blank %}
+      style="background-image: url({{ section.settings.background_image | image_url: width: 1500 }});"
+    {% endif %}
+  >
+    <div class="rich-text__wrapper rich-text__wrapper--{{ section.settings.desktop_content_position }}{% if section.settings.full_width %} page-width{% endif %}">
+      <div class="rich-text__blocks {{ section.settings.content_alignment }}">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'heading' -%}
+              <h2
+                class="rich-text__heading rte inline-richtext {{ block.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+              >
+                {{ block.settings.heading }}
+              </h2>
+            {%- when 'caption' -%}
+              <p
+                class="rich-text__caption {{ block.settings.text_style }} {{ block.settings.text_style }}--{{ block.settings.text_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+              >
+                {{ block.settings.caption | escape }}
+              </p>
+            {%- when 'text' -%}
+              <div
+                class="rich-text__text rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+              >
+                {{ block.settings.text }}
+              </div>
+            {%- when 'button' -%}
+              <div
+                class="rich-text__buttons{% if block.settings.button_label != blank and block.settings.button_label_2 != blank %} rich-text__buttons--multiple{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+              >
+                {%- if block.settings.button_label != blank -%}
+                  <a
+                    {% if block.settings.button_link == blank %}
+                      role="link" aria-disabled="true"
+                    {% else %}
+                      href="{{ block.settings.button_link }}"
+                    {% endif %}
+                    class="button{% if block.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}"
+                  >
+                    {{- block.settings.button_label | escape -}}
+                  </a>
+                {%- endif -%}
+                {%- if block.settings.button_label_2 != blank -%}
+                  <a
+                    {% if block.settings.button_link_2 == blank %}
+                      role="link" aria-disabled="true"
+                    {% else %}
+                      href="{{ block.settings.button_link_2 }}"
+                    {% endif %}
+                    class="button{% if block.settings.button_style_secondary_2 %} button--secondary{% else %} button--primary{% endif %}"
+                  >
+                    {{- block.settings.button_label_2 | escape -}}
+                  </a>
+                {%- endif -%}
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
     </div>
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Barra de Beneficios",
+  "name": "t:sections.rich-text.name",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
   "settings": [
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "Color de Fondo",
-      "default": "#2A3C4F"
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Imagen de fondo"
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "Color del Texto",
-      "default": "#FFFFFF"
+      "type": "select",
+      "id": "background_attachment",
+      "label": "Comportamiento de la imagen de fondo",
+      "default": "scroll",
+      "options": [
+        {
+          "value": "scroll",
+          "label": "Estático (se desplaza con la página)"
+        },
+        {
+          "value": "fixed",
+          "label": "Fijo (se mantiene en su lugar)"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_position_desktop",
+      "label": "Posición de la imagen de fondo (Escritorio)",
+      "default": "center center",
+      "options": [
+        {
+          "value": "top left",
+          "label": "Arriba a la izquierda"
+        },
+        {
+          "value": "top center",
+          "label": "Arriba al centro"
+        },
+        {
+          "value": "top right",
+          "label": "Arriba a la derecha"
+        },
+        {
+          "value": "center left",
+          "label": "Centro a la izquierda"
+        },
+        {
+          "value": "center center",
+          "label": "Centro"
+        },
+        {
+          "value": "center right",
+          "label": "Centro a la derecha"
+        },
+        {
+          "value": "bottom left",
+          "label": "Abajo a la izquierda"
+        },
+        {
+          "value": "bottom center",
+          "label": "Abajo al centro"
+        },
+        {
+          "value": "bottom right",
+          "label": "Abajo a la derecha"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_position_mobile",
+      "label": "Posición de la imagen de fondo (Móvil)",
+      "default": "center center",
+      "options": [
+        {
+          "value": "top left",
+          "label": "Arriba a la izquierda"
+        },
+        {
+          "value": "top center",
+          "label": "Arriba al centro"
+        },
+        {
+          "value": "top right",
+          "label": "Arriba a la derecha"
+        },
+        {
+          "value": "center left",
+          "label": "Centro a la izquierda"
+        },
+        {
+          "value": "center center",
+          "label": "Centro"
+        },
+        {
+          "value": "center right",
+          "label": "Centro a la derecha"
+        },
+        {
+          "value": "bottom left",
+          "label": "Abajo a la izquierda"
+        },
+        {
+          "value": "bottom center",
+          "label": "Abajo al centro"
+        },
+        {
+          "value": "bottom right",
+          "label": "Abajo a la derecha"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.rich-text.settings.desktop_content_position.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.rich-text.settings.desktop_content_position.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.rich-text.settings.desktop_content_position.options__3.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.rich-text.settings.desktop_content_position.label"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.rich-text.settings.content_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.rich-text.settings.content_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.rich-text.settings.content_alignment.options__3.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.rich-text.settings.content_alignment.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": true,
+      "label": "t:sections.rich-text.settings.full_width.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
     },
     {
       "type": "range",
-      "id": "speed",
-      "min": 10,
+      "id": "padding_top",
+      "min": 0,
       "max": 100,
-      "step": 5,
-      "unit": "s",
-      "label": "Velocidad de Deslizamiento",
-      "info": "Un número más alto significa una animación más lenta.",
-      "default": 30
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
     }
   ],
   "blocks": [
     {
-      "type": "feature",
-      "name": "Beneficio",
+      "type": "heading",
+      "name": "t:sections.rich-text.blocks.heading.name",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "t:sections.rich-text.blocks.heading.settings.heading.default",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading.label"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            {
+              "value": "h2",
+              "label": "t:sections.all.heading_size.options__1.label"
+            },
+            {
+              "value": "h1",
+              "label": "t:sections.all.heading_size.options__2.label"
+            },
+            {
+              "value": "h0",
+              "label": "t:sections.all.heading_size.options__3.label"
+            },
+            {
+              "value": "hxl",
+              "label": "t:sections.all.heading_size.options__4.label"
+            },
+            {
+              "value": "hxxl",
+              "label": "t:sections.all.heading_size.options__5.label"
+            }
+          ],
+          "default": "h1",
+          "label": "t:sections.all.heading_size.label"
+        }
+      ]
+    },
+    {
+      "type": "caption",
+      "name": "t:sections.rich-text.blocks.caption.name",
+      "limit": 3,
       "settings": [
         {
           "type": "text",
+          "id": "caption",
+          "default": "t:sections.rich-text.blocks.caption.settings.text.default",
+          "label": "t:sections.rich-text.blocks.caption.settings.text.label"
+        },
+        {
+          "type": "select",
+          "id": "text_style",
+          "options": [
+            {
+              "value": "subtitle",
+              "label": "t:sections.rich-text.blocks.caption.settings.text_style.options__1.label"
+            },
+            {
+              "value": "caption-with-letter-spacing",
+              "label": "t:sections.rich-text.blocks.caption.settings.text_style.options__2.label"
+            }
+          ],
+          "default": "caption-with-letter-spacing",
+          "label": "t:sections.rich-text.blocks.caption.settings.text_style.label"
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "options": [
+            {
+              "value": "small",
+              "label": "t:sections.rich-text.blocks.caption.settings.caption_size.options__1.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.rich-text.blocks.caption.settings.caption_size.options__2.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.rich-text.blocks.caption.settings.caption_size.options__3.label"
+            }
+          ],
+          "default": "medium",
+          "label": "t:sections.rich-text.blocks.caption.settings.caption_size.label"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.rich-text.blocks.text.name",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "richtext",
           "id": "text",
-          "label": "Texto del Beneficio",
-          "default": "Beneficio"
+          "default": "t:sections.rich-text.blocks.text.settings.text.default",
+          "label": "t:sections.rich-text.blocks.text.settings.text.label"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "t:sections.rich-text.blocks.buttons.name",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "header",
+          "content": "t:sections.rich-text.blocks.buttons.settings.header_button1.content"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "default": "t:sections.rich-text.blocks.buttons.settings.button_label_1.default",
+          "label": "t:sections.rich-text.blocks.buttons.settings.button_label_1.label",
+          "info": "t:sections.rich-text.blocks.buttons.settings.button_label_1.info"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:sections.rich-text.blocks.buttons.settings.button_link_1.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary",
+          "default": false,
+          "label": "t:sections.rich-text.blocks.buttons.settings.button_style_secondary_1.label"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.rich-text.blocks.buttons.settings.header_button2.content"
+        },
+        {
+          "type": "text",
+          "id": "button_label_2",
+          "label": "t:sections.rich-text.blocks.buttons.settings.button_label_2.label",
+          "info": "t:sections.rich-text.blocks.buttons.settings.button_label_2.info"
+        },
+        {
+          "type": "url",
+          "id": "button_link_2",
+          "label": "t:sections.rich-text.blocks.buttons.settings.button_link_2.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary_2",
+          "default": false,
+          "label": "t:sections.rich-text.blocks.buttons.settings.button_style_secondary_2.label"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Barra de Beneficios",
+      "name": "t:sections.rich-text.presets.name",
       "blocks": [
-        { "type": "feature", "settings": { "text": "Hasta 3 MSI" } },
-        { "type": "feature", "settings": { "text": "Garantía 2 Años" } },
-        { "type": "feature", "settings": { "text": "Envíos Rápidos" } }
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "button"
+        }
       ]
     }
   ]

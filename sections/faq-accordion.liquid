@@ -1,103 +1,142 @@
-{% comment %}
-  Sección de Preguntas Frecuentes (FAQ) con estilo de acordeón.
-  - Utiliza bloques para que cada pregunta sea un elemento editable.
-  - El acordeón se crea con las etiquetas <details> y <summary> de HTML para
-    mayor accesibilidad y rendimiento, sin necesidad de JavaScript.
-{% endcomment %}
+{{ 'section-image-banner.css' | asset_url | stylesheet_tag }}
+{{ 'component-newsletter.css' | asset_url | stylesheet_tag }}
+{{ 'newsletter-section.css' | asset_url | stylesheet_tag }}
+{{ 'section-email-signup-banner.css' | asset_url | stylesheet_tag }}
 
-<style>
-  .faq-section-{{ section.id }} {
-    padding: {{ section.settings.padding_vertical }}px 0;
-    background-color: {{ section.settings.background_color }};
+{%- style -%}
+  #Banner-{{ section.id }}::after {
+    opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
   }
 
-  .faq-container-{{ section.id }} {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
+  {%- if section.settings.image_height == 'adapt-image' and section.settings.image != blank -%}
+    @media screen and (max-width: 749px) {
+      #Banner-{{ section.id }}:not(.banner--mobile-bottom) .banner__content::before {
+        padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;
+        content: '';
+        display: block;
+      }
+    }
 
-  .faq-title-{{ section.id }} {
-    color: {{ section.settings.title_color }};
-    font-family: 'Matrice', sans-serif;
-    font-weight: 900;
-    text-transform: uppercase;
-    text-align: center;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    margin-bottom: 3rem;
-  }
+    #Banner-{{ section.id }}::before,
+    #Banner-{{ section.id }} .banner__media::before {
+      padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;
+      content: '';
+      display: block;
+    }
+  {%- endif -%}
+{%- endstyle -%}
 
-  .faq-accordion-{{ section.id }} {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .faq-item-{{ section.id }} {
-    background-color: {{ section.settings.item_background_color }};
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    border-radius: 0.75rem;
-    padding: 0.5rem 1.5rem;
-    transition: background-color 0.3s ease;
-  }
-
-  .faq-item-{{ section.id }}[open] {
-    background-color: {{ section.settings.item_background_color_open }};
-  }
-
-  .faq-question-{{ section.id }} {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    padding: 1rem 0;
-    font-family: 'Matrice', sans-serif;
-    font-weight: 900;
-    font-size: clamp(1.1rem, 3vw, 1.5rem);
-    color: {{ section.settings.question_color }};
-    list-style: none; /* Elimina el marcador por defecto de <summary> */
-  }
-
-  .faq-question-{{ section.id }}::-webkit-details-marker {
-    display: none; /* Oculta el marcador en Chrome/Safari */
-  }
-
-  .faq-answer-{{ section.id }} {
-    padding-bottom: 1.5rem;
-    color: {{ section.settings.answer_color }};
-    font-family: 'Archivo', sans-serif;
-    line-height: 1.6;
-  }
-
-  .faq-icon-{{ section.id }} {
-    font-size: 2rem;
-    font-weight: bold;
-    color: {{ section.settings.icon_color }};
-    transition: transform 0.3s ease;
-  }
-
-  .faq-item-{{ section.id }}[open] summary .faq-icon-{{ section.id }} {
-    transform: rotate(45deg);
-  }
-</style>
-
-<div class="faq-section-{{ section.id }}">
-  <div class="faq-container-{{ section.id }}">
-    {%- if section.settings.title != blank -%}
-      <h2 class="faq-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
-    {%- endif -%}
-
-    <div class="faq-accordion-{{ section.id }}">
+<div
+  id="Banner-{{ section.id }}"
+  class="email-signup-banner banner banner--content-align-{{ section.settings.desktop_content_alignment }} banner--content-align-mobile-{{ section.settings.mobile_content_alignment }} banner--{{ section.settings.image_height }}{% if section.settings.image_height == 'adapt-image' and section.settings.image != blank %} banner--adapt{% endif %}{% if section.settings.show_text_below %} banner--mobile-bottom{%- endif -%}{% if section.settings.show_text_box == false %} banner--desktop-transparent{% endif %}"
+>
+  {%- if section.settings.show_background_image -%}
+    <div class="banner__media{% if section.settings.image != blank %} media{% endif %}">
+      {%- if section.settings.image != blank -%}
+        <img
+          srcset="
+            {%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+            {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {%- if section.settings.image.width >= 1780 -%}{{ section.settings.image | image_url: width: 1780 }} 1780w,{%- endif -%}
+            {%- if section.settings.image.width >= 2000 -%}{{ section.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}
+            {%- if section.settings.image.width >= 3000 -%}{{ section.settings.image | image_url: width: 3000 }} 3000w,{%- endif -%}
+            {%- if section.settings.image.width >= 3840 -%}{{ section.settings.image | image_url: width: 3840 }} 3840w,{%- endif -%}
+            {{ section.settings.image | image_url }} {{ section.settings.image.width }}w
+          "
+          sizes="100vw"
+          src="{{ section.settings.image | image_url: width: 1500 }}"
+          loading="lazy"
+          alt="{{ section.settings.image.alt | escape }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.width | divided_by: section.settings.image.aspect_ratio }}"
+        >
+      {%- else -%}
+        {{- 'email-signup-banner-background.svg' | inline_asset_content -}}
+        {{- 'email-signup-banner-background-mobile.svg' | inline_asset_content -}}
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  <div class="banner__content banner__content--{{ section.settings.desktop_content_position }} page-width">
+    <div class="email-signup-banner__box banner__box newsletter newsletter__wrapper isolate{% if section.settings.show_background_image == false %} email-signup-banner__box--no-image{% endif %} content-container color-{{ section.settings.color_scheme }} gradient content-container--full-width-mobile">
       {%- for block in section.blocks -%}
-        <details class="faq-item-{{ section.id }}">
-          <summary class="faq-question-{{ section.id }}">
-            {{ block.settings.question | escape }}
-            <span class="faq-icon-{{ section.id }}">+</span>
-          </summary>
-          <div class="faq-answer-{{ section.id }}">
-            {{ block.settings.answer }}
-          </div>
-        </details>
+        {%- case block.type -%}
+          {%- when 'heading' -%}
+            <h2 class="email-signup-banner__heading {{ block.settings.heading_size }}" {{ block.shopify_attributes }}>
+              {{ block.settings.heading | escape }}
+            </h2>
+          {%- when 'paragraph' -%}
+            <div class="newsletter__subheading rte {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+            </div>
+          {%- when 'email_form' -%}
+            <div {{ block.shopify_attributes }}>
+              {% form 'customer', class: 'newsletter-form' %}
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                <div class="newsletter-form__field-wrapper">
+                  <div class="field">
+                    <input
+                      id="NewsletterForm--{{ section.id }}"
+                      type="email"
+                      name="contact[email]"
+                      class="field__input"
+                      value="{{ form.email }}"
+                      aria-required="true"
+                      autocorrect="off"
+                      autocapitalize="off"
+                      autocomplete="email"
+                      {% if form.errors %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-describedby="Newsletter-error--{{ section.id }}"
+                      {% elsif form.posted_successfully? %}
+                        aria-describedby="Newsletter-success--{{ section.id }}"
+                      {% endif %}
+                      placeholder="{{ 'newsletter.label' | t }}"
+                      required
+                    >
+                    <label class="field__label" for="NewsletterForm--{{ section.id }}">
+                      {{ 'newsletter.label' | t }}
+                    </label>
+                    <button
+                      type="submit"
+                      class="newsletter-form__button field__button"
+                      name="commit"
+                      id="Subscribe"
+                      aria-label="{{ 'newsletter.button_label' | t }}"
+                    >
+                      <span class="svg-wrapper">
+                        {{- 'icon-arrow.svg' | inline_asset_content -}}
+                      </span>
+                    </button>
+                  </div>
+                  {%- if form.errors -%}
+                    <small class="newsletter-form__message form__message" id="Newsletter-error--{{ section.id }}">
+                      <span class="svg-wrapper">
+                        {{- 'icon-error.svg' | inline_asset_content -}}
+                      </span>
+                      {{- form.errors.translated_fields.email | capitalize }}
+                      {{ form.errors.messages.email -}}
+                    </small>
+                  {%- endif -%}
+                </div>
+                {%- if form.posted_successfully? -%}
+                  <h3
+                    class="newsletter-form__message newsletter-form__message--success form__message"
+                    id="Newsletter-success--{{ section.id }}"
+                    tabindex="-1"
+                    autofocus
+                  >
+                    <span class="svg-wrapper">
+                      {{- 'icon-success.svg' | inline_asset_content -}}
+                    </span>
+                    {{- 'newsletter.success' | t }}
+                  </h3>
+                {%- endif -%}
+              {% endform %}
+            </div>
+        {%- endcase -%}
       {%- endfor -%}
     </div>
   </div>
@@ -105,99 +144,264 @@
 
 {% schema %}
 {
-  "name": "Preguntas Frecuentes",
+  "name": "t:sections.email-signup-banner.name",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": {
+    "templates": ["password"]
+  },
   "settings": [
     {
-      "type": "text",
-      "id": "title",
-      "label": "Título",
-      "default": "Preguntas Frecuentes"
+      "type": "paragraph",
+      "content": "t:sections.email-signup-banner.settings.paragraph.content"
     },
     {
-      "type": "header",
-      "content": "Colores"
-    },
+      "type": "checkbox",
+      "id": "show_background_image",
+      "label": "t:sections.email-signup-banner.settings.show_background_image.label",
+      "default": true
+    },    
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "Color de Fondo de la Sección",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "title_color",
-      "label": "Color del Título",
-      "default": "#f4af23"
-    },
-    {
-      "type": "color",
-      "id": "item_background_color",
-      "label": "Fondo de la Pregunta (Cerrada)",
-      "default": "#1c1c1c"
-    },
-    {
-      "type": "color",
-      "id": "item_background_color_open",
-      "label": "Fondo de la Pregunta (Abierta)",
-      "default": "#2a2a2a"
-    },
-    {
-      "type": "color",
-      "id": "question_color",
-      "label": "Color del Texto de la Pregunta",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "color",
-      "id": "answer_color",
-      "label": "Color del Texto de la Respuesta",
-      "default": "#a0a0a0"
-    },
-    {
-      "type": "color",
-      "id": "icon_color",
-      "label": "Color del Icono (+)",
-      "default": "#f4af23"
-    },
-    {
-      "type": "header",
-      "content": "Espaciado"
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.email-signup-banner.settings.image.label"
     },
     {
       "type": "range",
-      "id": "padding_vertical",
-      "min": 20, "max": 120, "step": 4, "unit": "px",
-      "label": "Espaciado vertical",
-      "default": 80
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "t:sections.email-signup-banner.settings.image_overlay_opacity.label",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        {
+          "value": "adapt-image",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__1.label"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__4.label"
+        }
+      ],
+      "default": "medium",
+      "label": "t:sections.email-signup-banner.settings.image_height.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.email-signup-banner.settings.content_header.content"
+    },    
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__1.label"
+        },
+        {
+          "value": "top-center",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__2.label"
+        },
+        {
+          "value": "top-right",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__3.label"
+        },
+        {
+          "value": "middle-left",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__4.label"
+        },
+        {
+          "value": "middle-center",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__5.label"
+        },
+        {
+          "value": "middle-right",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__6.label"
+        },
+        {
+          "value": "bottom-left",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__7.label"
+        },
+        {
+          "value": "bottom-center",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__8.label"
+        },
+        {
+          "value": "bottom-right",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__9.label"
+        }
+      ],
+      "default": "middle-center",
+      "label": "t:sections.email-signup-banner.settings.desktop_content_position.label"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_alignment.options__3.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.email-signup-banner.settings.desktop_content_alignment.label"
+    },    
+    {
+      "type": "checkbox",
+      "id": "show_text_box",
+      "default": true,
+      "label": "t:sections.email-signup-banner.settings.show_text_box.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.email-signup-banner.settings.color_scheme.info",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.email-signup-banner.settings.header.content"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__3.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_below",
+      "default": true,
+      "label": "t:sections.email-signup-banner.settings.show_text_below.label"
     }
   ],
   "blocks": [
     {
-      "type": "faq_item",
-      "name": "Pregunta",
+      "type": "heading",
+      "name": "t:sections.email-signup-banner.blocks.heading.name",
+      "limit": 1,
       "settings": [
         {
           "type": "text",
-          "id": "question",
-          "label": "Pregunta",
-          "default": "¿ES COMPATIBLE CON MI CELULAR?"
+          "id": "heading",
+          "default": "t:sections.email-signup-banner.blocks.heading.settings.heading.default",
+          "label": "t:sections.email-signup-banner.blocks.heading.settings.heading.label"
         },
         {
-          "type": "richtext",
-          "id": "answer",
-          "label": "Respuesta",
-          "default": "<p>Sí, el smartwatch KLSW-01 es totalmente compatible con los sistemas operativos iOS y Android. Solo tienes que descargar la aplicación correspondiente para sincronizarlo y recibir notificaciones.</p>"
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            {
+              "value": "h2",
+              "label": "t:sections.all.heading_size.options__1.label"
+            },
+            {
+              "value": "h1",
+              "label": "t:sections.all.heading_size.options__2.label"
+            },
+            {
+              "value": "h0",
+              "label": "t:sections.all.heading_size.options__3.label"
+            },
+            {
+              "value": "hxl",
+              "label": "t:sections.all.heading_size.options__4.label"
+            },
+            {
+              "value": "hxxl",
+              "label": "t:sections.all.heading_size.options__5.label"
+            }
+          ],
+          "default": "h1",
+          "label": "t:sections.all.heading_size.label"
         }
       ]
+    },
+    {
+      "type": "paragraph",
+      "name": "t:sections.email-signup-banner.blocks.paragraph.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "t:sections.email-signup-banner.blocks.paragraph.settings.paragraph.default",
+          "label": "t:sections.email-signup-banner.blocks.paragraph.settings.paragraph.label"
+        },
+        {
+          "type": "select",
+          "id": "text_style",
+          "options": [
+            {
+              "value": "body",
+              "label": "t:sections.email-signup-banner.blocks.paragraph.settings.text_style.options__1.label"
+            },
+            {
+              "value": "subtitle",
+              "label": "t:sections.email-signup-banner.blocks.paragraph.settings.text_style.options__2.label"
+            }
+          ],
+          "default": "body",
+          "label": "t:sections.email-signup-banner.blocks.paragraph.settings.text_style.label"
+        }
+      ]
+    },
+    {
+      "type": "email_form",
+      "name": "t:sections.email-signup-banner.blocks.email_form.name",
+      "limit": 1
     }
   ],
   "presets": [
     {
-      "name": "Preguntas Frecuentes",
+      "name": "t:sections.email-signup-banner.presets.name",
       "blocks": [
-        { "type": "faq_item" },
-        { "type": "faq_item", "settings": { "question": "¿PUEDO NADAR CON ÉL?" } },
-        { "type": "faq_item", "settings": { "question": "¿LA CORREA DE CAMBIA?" } }
+        {
+          "type": "heading"
+        },
+        {
+          "type": "paragraph"
+        },
+        {
+          "type": "email_form"
+        }
       ]
     }
   ]
