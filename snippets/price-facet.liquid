@@ -1,45 +1,133 @@
-<span class="field-currency">{{ cart.currency.symbol }}</span>
+{% comment %}
+  Snippet para la pantalla de carga (Preloader)
+  Muestra un logo estático con una rueda de carga debajo.
+{% endcomment %}
+<style>
+  #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    z-index: 9999; /* Asegura que esté por encima de todo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.75s ease, visibility 0.75s ease;
+  }
 
-<div class="field">
-  <input
-    class="field__input"
-    name="{{ filter.min_value.param_name }}"
-    id="{{ id_prefix }}{{ filter.label | escape }}-GTE"
-    {%- if filter.min_value.value -%}
-      value="{{ filter.min_value.value | money_without_currency }}"
-    {%- endif -%}
-    type="text"
-    inputmode="decimal"
-    placeholder="0"
-    data-pattern="\d| |,|\."
-    data-min="0"
-    data-max="{{ filter.range_max | money_without_currency }}"
+  #preloader.preloader-hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .preloader-logo {
+    width: 100px;
+    height: auto;
+    margin-bottom: 40px; /* Más espacio entre el logo y la rueda de carga */
+    display: block; /* Asegurar que se muestre como bloque */
+  }
+
+  /* Rueda/Balón de fútbol que gira */
+  .preloader-spinner {
+    width: 40px !important;
+    height: 40px !important;
+    margin-top: 30px !important;
+    position: relative !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Opción 1: Rueda simple que gira */
+  .spinner-wheel {
+    width: 100%;
+    height: 100%;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #ffffff;
+    border-radius: 50%;
+    animation: spin-wheel 1s linear infinite;
+  }
+
+  /* Opción 2: Balón de fútbol que gira */
+  .spinner-ball {
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 50%;
+    position: relative;
+    animation: spin-ball 2s linear infinite;
+    display: none; /* Cambiar a block para usar el balón */
+  }
+
+  .spinner-ball::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 60%;
+    background:
+      radial-gradient(circle at 30% 30%, transparent 8px, #000 9px, #000 11px, transparent 12px),
+      radial-gradient(circle at 70% 30%, transparent 8px, #000 9px, #000 11px, transparent 12px),
+      radial-gradient(circle at 50% 70%, transparent 8px, #000 9px, #000 11px, transparent 12px);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  @keyframes spin-wheel {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes spin-ball {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Animación de rotación para la rueda */
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<div id="preloader">
+  {% comment %}
+    Asegúrate de que tu logo 'ESCUDO-02 (1).webp'
+    esté subido en la carpeta 'Assets' de tu tema.
+  {% endcomment %}
+  <img
+    class="preloader-logo"
+    src="{{ 'ESCUDO-02 (1).webp' | asset_url }}"
+    alt="Loading Logo"
   >
-  <label class="field__label" for="{{ id_prefix }}{{ filter.label | escape }}-GTE">
-    {{- 'products.facets.from' | t -}}
-  </label>
+
+  <!-- Spinner: Rueda o Balón que gira -->
+  <div class="preloader-spinner">
+    <!-- OPCIÓN 1: Rueda simple (ACTIVA) -->
+    <div class="spinner-wheel"></div>
+
+    <!-- OPCIÓN 2: Balón de fútbol (desactivada) -->
+    <!-- <div class="spinner-ball"></div> -->
+  </div>
 </div>
 
-{%- if filter_type != 'vertical' -%}
-  <span class="field-currency">{{ cart.currency.symbol }}</span>
-{%- endif -%}
-
-<div class="field">
-  <input
-    class="field__input"
-    name="{{ filter.max_value.param_name }}"
-    id="{{ id_prefix }}{{ filter.label | escape }}-LTE"
-    {%- if filter.max_value.value -%}
-      value="{{ filter.max_value.value | money_without_currency }}"
-    {%- endif -%}
-    type="text"
-    inputmode="decimal"
-    placeholder="{{ filter.range_max | money_without_currency }}"
-    data-pattern="\d| |,|\."
-    data-min="0"
-    data-max="{{ filter.range_max | money_without_currency }}"
-  >
-  <label class="field__label" for="{{ id_prefix }}{{ filter.label | escape }}-LTE">
-    {{- 'products.facets.to' | t -}}
-  </label>
-</div>
+<script>
+  // Espera a que toda la página, incluyendo imágenes y scripts, se haya cargado.
+  window.addEventListener('load', function() {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+      // Espera un momento extra para una transición suave.
+      setTimeout(function() {
+        preloader.classList.add('preloader-hidden');
+      }, 500); // 500 milisegundos de retraso
+    }
+  });
+</script>

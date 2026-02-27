@@ -1,66 +1,78 @@
 {% comment %}
-  Snippet para la pantalla de carga (Preloader)
-  Muestra un logo que gira mientras la página carga.
+  Renders a set of links for paginated results. Must be used within paginate tags.
+
+  Usage:
+  {% paginate results by 2 %}
+    {% render 'pagination', paginate: paginate, anchor: '#yourID' %}
+  {% endpaginate %}
+
+  Accepts:
+  - paginate: {Object}
+  - anchor: {String} (optional) This can be added so that on page reload it takes you to wherever you've placed your anchor tag.
 {% endcomment %}
 
-<style>
-  #preloader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000000;
-    z-index: 9999; /* Asegura que esté por encima de todo */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.75s ease, visibility 0.75s ease;
-  }
+{{ 'component-pagination.css' | asset_url | stylesheet_tag }}
 
-  #preloader.preloader-hidden {
-    opacity: 0;
-    visibility: hidden;
-  }
+{%- if paginate.parts.size > 0 -%}
+  <div class="pagination-wrapper" data-page="{{ paginate.current_page }}">
+    <nav class="pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}">
+      <ul class="pagination__list list-unstyled" role="list">
+        {%- if paginate.previous -%}
+          <li>
+            <a
+              href="{{ paginate.previous.url }}{{ anchor }}"
+              class="pagination__item pagination__item--next pagination__item-arrow link motion-reduce"
+              aria-label="{{ 'general.pagination.previous' | t }}"
+            >
+              <span class="svg-wrapper">
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </span>
+            </a>
+          </li>
+        {%- endif -%}
 
-  .preloader-logo {
-    width: 100px; /* Un poco más grande para que se note la animación */
-    height: auto;
-    /* --- CAMBIO: Animación de rotación aplicada al logo --- */
-    animation: spin 1.5s linear infinite;
-  }
+        {%- for part in paginate.parts -%}
+          <li>
+            {%- if part.is_link -%}
+              <a
+                href="{{ part.url }}{{ anchor }}"
+                class="pagination__item link"
+                aria-label="{{ 'general.pagination.page' | t: number: part.title }}"
+              >
+                {{- part.title -}}
+              </a>
+            {%- else -%}
+              {%- if part.title == paginate.current_page -%}
+                <a
+                  role="link"
+                  aria-disabled="true"
+                  class="pagination__item pagination__item--current light"
+                  aria-current="page"
+                  aria-label="{{ 'general.pagination.page' | t: number: part.title }}"
+                >
+                  {{- part.title -}}
+                </a>
+              {%- else -%}
+                <span class="pagination__item">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
 
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-</style>
-
-<div id="preloader">
-  {% comment %}
-    Asegúrate de que tu logo 'ESCUDO-03.webp' o 'LOGOKINGS-03.webp'
-    esté subido en la carpeta 'Assets' de tu tema.
-  {% endcomment %}
-  <img
-    class="preloader-logo"
-    src="{{ 'LOGOKINGS-03.webp' | asset_url }}"
-    alt="Loading Logo"
-  >
-</div>
-
-<script>
-  // Espera a que toda la página, incluyendo imágenes y scripts, se haya cargado.
-  window.addEventListener('load', function() {
-    const preloader = document.getElementById('preloader');
-    if (preloader) {
-      // Espera un momento extra para una transición suave.
-      setTimeout(function() {
-        preloader.classList.add('preloader-hidden');
-      }, 500); // 500 milisegundos de retraso
-    }
-  });
-</script>
+        {%- if paginate.next -%}
+          <li>
+            <a
+              href="{{ paginate.next.url }}{{ anchor }}"
+              class="pagination__item pagination__item--prev pagination__item-arrow link motion-reduce"
+              aria-label="{{ 'general.pagination.next' | t }}"
+            >
+              <span class="svg-wrapper">
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </span>
+            </a>
+          </li>
+        {%- endif -%}
+      </ul>
+    </nav>
+  </div>
+{%- endif -%}
